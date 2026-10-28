@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QApplication, QDialog
 from . import APP_NAME, AUTHOR, TERMS_VERSION, __version__
 from .core.paths import app_dir, resource
 from .core.settings import Settings
+from .i18n import set_language, system_language
 from .ui import icons, theme
 
 
@@ -78,13 +79,14 @@ def _selftest(app) -> int:
 
 
 def main() -> int:
+    settings = Settings.load()
+    set_language(settings.language or system_language())  # before any UI text is built
     app = build_app(sys.argv)
     if "--selftest" in sys.argv:
         return _selftest(app)
     from .ui.legal_page import ConsentDialog
     from .ui.window import MainWindow
 
-    settings = Settings.load()
     if settings.accepted_terms < TERMS_VERSION:
         if ConsentDialog().exec() != QDialog.DialogCode.Accepted:
             return 0

@@ -3,6 +3,7 @@ from PySide6.QtGui import QColor, QPalette
 from PySide6.QtWidgets import QDialog, QPushButton, QTextBrowser, QVBoxLayout, QWidget
 
 from ..core.paths import resource
+from ..i18n import language, t
 from . import theme
 from .widgets import Backdrop, Card, Segmented, Toggle, hbox, label
 
@@ -10,11 +11,19 @@ DOCS = [("Kullanım koşulları", "TERMS.md"), ("Gizlilik ve KVKK", "PRIVACY.md"
         ("Lisanslar", "THIRD_PARTY_NOTICES.md")]
 
 
+TR_MARKER = "<!-- tr -->"
+
+
 def read_doc(name: str) -> str:
+    """Docs hold English first and Turkish after TR_MARKER; show the part for the current language."""
     try:
-        return resource(name).read_text(encoding="utf-8")
+        text = resource(name).read_text(encoding="utf-8")
     except OSError:
-        return f"{name} bulunamadı."
+        return t("{name} bulunamadı.", name=name)
+    if TR_MARKER in text:
+        en, tr = text.split(TR_MARKER, 1)
+        return tr if language() == "tr" else en
+    return text
 
 
 def doc_view() -> QTextBrowser:
@@ -34,11 +43,11 @@ class LegalPage(QWidget):
         root = QVBoxLayout(self)
         root.setContentsMargins(40, 36, 40, 28)
         root.setSpacing(6)
-        root.addWidget(label("Yasal", "H1"))
-        root.addWidget(label("Kısaca: kişisel kullanım için. İndirdiğin içerikten ve nasıl kullandığından sen "
-                             "sorumlusun.", "Sub"))
+        root.addWidget(label(t("Yasal"), "H1"))
+        root.addWidget(label(t("Kısaca: kişisel kullanım için. İndirdiğin içerikten ve nasıl kullandığından sen "
+                               "sorumlusun."), "Sub"))
         root.addSpacing(18)
-        self.tabs = Segmented([t for t, _ in DOCS])
+        self.tabs = Segmented([t(name) for name, _ in DOCS])
         self.tabs.changed.connect(self._show)
         root.addWidget(self.tabs)
         root.addSpacing(10)
@@ -57,7 +66,7 @@ class ConsentDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("zConverter · Kullanım koşulları")
+        self.setWindowTitle("zConverter · " + t("Kullanım koşulları"))
         self.resize(720, 640)
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
@@ -66,9 +75,9 @@ class ConsentDialog(QDialog):
         root = QVBoxLayout(bg)
         root.setContentsMargins(32, 28, 32, 24)
         root.setSpacing(8)
-        root.addWidget(label("Başlamadan önce", "H1"))
-        root.addWidget(label("zConverter yalnızca hakkın olan ya da kişisel kullanımına izin verilen içerikler "
-                             "içindir. Lütfen koşulları oku.", "Sub", wrap=True))
+        root.addWidget(label(t("Başlamadan önce"), "H1"))
+        root.addWidget(label(t("zConverter yalnızca hakkın olan ya da kişisel kullanımına izin verilen içerikler "
+                               "içindir. Lütfen koşulları oku."), "Sub", wrap=True))
         root.addSpacing(10)
         card = Card(padding=18)
         view = doc_view()
@@ -76,10 +85,10 @@ class ConsentDialog(QDialog):
         card.layout().addWidget(view)
         root.addWidget(card, 1)
         root.addSpacing(8)
-        self.agree = Toggle("Okudum, anladım ve kabul ediyorum")
-        quit_btn = QPushButton("Çık")
+        self.agree = Toggle(t("Okudum, anladım ve kabul ediyorum"))
+        quit_btn = QPushButton(t("Çık"))
         quit_btn.clicked.connect(self.reject)
-        self.ok = QPushButton("Devam et")
+        self.ok = QPushButton(t("Devam et"))
         self.ok.setObjectName("Primary")
         self.ok.setEnabled(False)
         self.ok.clicked.connect(self.accept)

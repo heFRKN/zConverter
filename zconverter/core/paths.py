@@ -14,7 +14,33 @@ def app_dir() -> Path:
     return path
 
 
+def downloads_dir() -> Path:
+    """The user's Downloads folder, wherever Windows has it (it can be moved to another drive)."""
+    if sys.platform == "win32":
+        import ctypes
+        import uuid
+        from ctypes import wintypes
+
+        guid = uuid.UUID("374DE290-123F-4565-9164-39C4925E467B")  # FOLDERID_Downloads
+        buf = (ctypes.c_byte * 16).from_buffer_copy(guid.bytes_le)
+        path = wintypes.LPWSTR()
+        try:
+            if ctypes.windll.shell32.SHGetKnownFolderPath(ctypes.byref(buf), 0, None, ctypes.byref(path)) == 0:
+                try:
+                    return Path(path.value)
+                finally:
+                    ctypes.windll.ole32.CoTaskMemFree(path)
+        except (AttributeError, OSError):
+            pass
+    return Path.home() / "Downloads"
+
+
 def default_output_dir() -> Path:
+    return downloads_dir()
+
+
+def legacy_output_dir() -> Path:
+    """Default of versions before 1.3 (a zConverter folder inside Downloads)."""
     return Path.home() / "Downloads" / APP_NAME
 
 

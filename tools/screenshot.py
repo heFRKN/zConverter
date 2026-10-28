@@ -8,6 +8,10 @@ from PySide6.QtCore import QTimer
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from zconverter.i18n import set_language  # noqa: E402
+
+set_language(sys.argv[2] if len(sys.argv) > 2 else "en")  # before any UI module builds its text
+
 from zconverter.core import profiles  # noqa: E402
 from zconverter.core.downloader import Request  # noqa: E402
 from zconverter.core.settings import Settings  # noqa: E402
@@ -57,10 +61,10 @@ def main():
         prof_page = win.stack.currentWidget()
         prof_page.handle.setText("NASA")
         prof_page._fetched(profiles.fetch("NASA", "youtube"))
-        prof_page.opts["avatar"].crop = "circle"
-        prof_page.opts["avatar"].fmt = "png"
-        prof_page._select("avatar")
-        prof_page._changed()
+        prof_page.target.set_index(1)
+        prof_page.ratio_seg.set_index(4)  # banner cropped to 3:1
+        prof_page.target.set_index(0)
+        prof_page.ratio_seg.set_index(2)  # circle profile picture
         QTimer.singleShot(2500, shot_profile)
 
     def shot_profile():

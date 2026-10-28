@@ -1,7 +1,7 @@
 import json
 from dataclasses import asdict, dataclass, fields
 
-from .paths import app_dir, default_output_dir
+from .paths import app_dir, default_output_dir, legacy_output_dir
 
 
 @dataclass
@@ -10,6 +10,7 @@ class Settings:
     cookies_browser: str = ""  # "" = off, otherwise a yt-dlp browser name
     parallel: int = 2
     accepted_terms: int = 0
+    language: str = ""  # "" = follow Windows
 
     @property
     def _file(self):
@@ -26,6 +27,10 @@ class Settings:
         for key, value in data.items():
             if key in known:
                 setattr(s, key, value)
+        if s.output_dir == str(legacy_output_dir()):
+            s.output_dir = str(default_output_dir())  # old default → plain Downloads
+        if s.cookies_browser not in ("", "firefox"):
+            s.cookies_browser = ""  # Chromium sessions can't be read any more; in-app sign-in replaced it
         return s
 
     def save(self) -> None:

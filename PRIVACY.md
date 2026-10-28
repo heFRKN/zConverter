@@ -1,6 +1,58 @@
+# Privacy Policy
+
+Last updated: 28 October 2026 · [Türkçe (KVKK Aydınlatma Metni)](#gizlilik-politikası-ve-kvkk-aydınlatma-metni)
+
+## In short
+
+- No accounts, no servers, no analytics or telemetry, no ads.
+- The author **never receives, collects or stores** any personal data about you.
+- Everything stays on this computer.
+
+## 1. Data controller
+
+The app runs entirely on your device and sends nothing to the author, so the author is not a data controller or processor for anything processed with it (Turkish KVKK No. 6698, Art. 3; GDPR). If you use the app to save other people's personal data (for example a profile picture), you are responsible for that processing. Purely personal or household activity is outside the scope of KVKK (Art. 28/1-a) and GDPR (Art. 2(2)(c)); sharing or publishing such data may not be.
+
+## 2. What is stored on your computer
+
+| Data | Location | Purpose |
+|---|---|---|
+| Settings: save folder, language, Firefox session preference, parallel downloads, accepted terms version | `%APPDATA%\zConverter\settings.json` | Remember your preferences |
+| Sessions of platforms you signed in to (session cookies, encrypted with Windows DPAPI) | `%APPDATA%\zConverter\sessions` | Download content that requires signing in |
+| yt-dlp cache (no personal data) | `%APPDATA%\zConverter\cache` | Faster downloads |
+| Files you download | The folder you choose | Your request |
+
+No history, search log or other logs are kept. Delete `%APPDATA%\zConverter` to remove everything.
+
+## 3. Network connections
+
+Connections are made only for actions you start, directly from your device to: the platform you chose (YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads, Facebook) and its content delivery networks; YouTube search, to match Spotify tracks; and the open-source [FxTwitter](https://github.com/FxEmbed/FxEmbed) API (`api.fxtwitter.com`) for X profile images, which only receives the username you entered. These services process data such as your IP address under their own policies. The app identifies itself as `zConverter/<version>`; only for TikTok links yt-dlp's browser compatibility mode is used.
+
+## 4. Sessions
+
+There is no session until you sign in.
+
+- You sign in on the platform's **own page** inside the app; your password never reaches the app and is never stored.
+- Only the resulting session cookies are kept, encrypted with Windows DPAPI so that only your Windows account on this computer can read them.
+- Sessions are **never sent** to the author or third parties, only to the platform they belong to, as a browser would.
+- If your default browser is Firefox and you turn the option on, its open session is read in memory only and never written to disk.
+- Sessions of Chrome, Edge, Brave and similar browsers are never read.
+- Remove a session at any time with Settings → Accounts → Sign out.
+
+## 5. Your rights
+
+As the author holds no data about you, requests under KVKK Art. 11 or the GDPR should go to the platforms that process your data. Questions: [GitHub Issues](https://github.com/heFRKN/zConverter/issues).
+
+## 6. Changes
+
+This policy may change; the current version is always in the repository and in the app's Legal section.
+
+<!-- tr -->
+
+---
+
 # Gizlilik Politikası ve KVKK Aydınlatma Metni
 
-Son güncelleme: 28 Ekim 2026
+Son güncelleme: 28 Ekim 2026 · [English](#privacy-policy)
 
 ## Kısaca
 
@@ -18,7 +70,7 @@ Uygulamayı kullanarak başkalarına ait kişisel verileri (ör. profil fotoğra
 
 | Veri | Konum | Amaç |
 |---|---|---|
-| Ayarlar: kayıt klasörü, Firefox oturumu tercihi, eşzamanlı indirme sayısı, kabul edilen koşul sürümü | `%APPDATA%\zConverter\settings.json` | Tercihlerini hatırlamak |
+| Ayarlar: kayıt klasörü, dil, Firefox oturumu tercihi, eşzamanlı indirme sayısı, kabul edilen koşul sürümü | `%APPDATA%\zConverter\settings.json` | Tercihlerini hatırlamak |
 | Hesap oturumları (yalnızca giriş yaptığın platformlar için oturum çerezleri, DPAPI ile şifreli) | `%APPDATA%\zConverter\sessions` | Giriş isteyen içerikleri indirebilmek |
 | yt-dlp önbelleği (kişisel veri içermez, platform çözümleme verileri) | `%APPDATA%\zConverter\cache` | Daha hızlı indirme |
 | İndirdiğin dosyalar | Seçtiğin klasör | Senin isteğin |
@@ -57,13 +109,3 @@ Aynı ilkeler geçerlidir. Geliştirici GDPR anlamında veri sorumlusu (controll
 ## 7. Değişiklikler
 
 Bu metin güncellenebilir; güncel sürüm her zaman depoda ve Uygulamanın "Yasal" bölümünde yer alır.
-
----
-
-# Privacy Policy (English)
-
-- **No accounts, no servers, no analytics or telemetry, no ads.** The author never receives, collects or stores any personal data.
-- **Stored locally:** settings (`%APPDATA%\zConverter\settings.json`), sessions of platforms you signed in to (`%APPDATA%\zConverter\sessions`, encrypted with Windows DPAPI), a yt-dlp cache with no personal data (`%APPDATA%\zConverter\cache`) and the files you download. No history or logs are kept.
-- **Network:** connections are made only when you start an action, directly from your device to the platform you chose, YouTube search (for Spotify matching) and the open-source FxTwitter API (for X profile images; only the username is sent). Those services process data such as your IP address under their own policies.
-- **Sign-in:** off until you sign in. You log in on the platform's own page inside the app; your password never reaches the app. Only the resulting session cookies are kept, encrypted with DPAPI, never sent to the author or third parties, only to the platform they belong to. If your default browser is Firefox you can opt to use its open session (read in memory only). Sessions of Chrome / Edge / Brave are never read. Remove sessions any time in Settings → Accounts.
-- **Controller:** the app runs entirely on your device, so the author is not a data controller or processor under KVKK or GDPR. Purely personal or household activity is outside the scope of KVKK (Art. 28/1-a) and GDPR (Art. 2(2)(c)).

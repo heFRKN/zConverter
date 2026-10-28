@@ -79,8 +79,9 @@ class Segmented(QWidget):
     def set_index(self, index: int, animate: bool = True, emit: bool = True):
         if index == self._index or not 0 <= index < len(self._items):
             return
+        was_empty = self._index < 0
         self._index = index
-        if animate and self.isVisible():
+        if animate and self.isVisible() and not was_empty:
             self._anim.stop()
             self._anim.setStartValue(self._pos)
             self._anim.setEndValue(float(index))
@@ -90,6 +91,12 @@ class Segmented(QWidget):
             self.update()
         if emit:
             self.changed.emit(index)
+
+    def clear_selection(self):
+        """No segment selected (e.g. the value came from somewhere else)."""
+        self._anim.stop()
+        self._index = -1
+        self.update()
 
     def _font(self) -> QFont:
         f = QFont(self.font())
@@ -140,10 +147,11 @@ class Segmented(QWidget):
         p.setBrush(QColor(theme.SURFACE_2))
         p.drawRoundedRect(r, 8, 8)
         sw = self._seg_w()
-        thumb = QRectF(3 + self._pos * sw, 3, sw, r.height() - 5)
-        p.setPen(Qt.PenStyle.NoPen)
-        p.setBrush(QColor(theme.SURFACE_3))
-        p.drawRoundedRect(thumb, 6, 6)
+        if self._index >= 0:
+            thumb = QRectF(3 + self._pos * sw, 3, sw, r.height() - 5)
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(QColor(theme.SURFACE_3))
+            p.drawRoundedRect(thumb, 6, 6)
         p.setFont(self._font())
         for i, t in enumerate(self._items):
             cell = QRectF(3 + i * sw, 0, sw, r.height())
@@ -248,16 +256,19 @@ class ProgressLine(QWidget):
 
 
 class ElidedLabel(QLabel):
-    def __init__(self, text="", parent=None):
+    """Single line that shortens itself with '…'; middle=True keeps both ends (good for paths)."""
+
+    def __init__(self, text="", parent=None, middle: bool = False):
         super().__init__(text, parent)
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         self.setMinimumWidth(40)
+        self._mode = Qt.TextElideMode.ElideMiddle if middle else Qt.TextElideMode.ElideRight
 
     def paintEvent(self, _):
         p = QPainter(self)
         p.setPen(self.palette().color(self.foregroundRole()))
         p.setFont(self.font())
-        text = self.fontMetrics().elidedText(self.text(), Qt.TextElideMode.ElideRight, self.width())
+        text = self.fontMetrics().elidedText(self.text(), self._mode, self.width())
         p.drawText(self.rect(), int(self.alignment()) | Qt.AlignmentFlag.AlignVCenter, text)
 
 

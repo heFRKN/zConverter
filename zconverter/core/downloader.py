@@ -8,6 +8,7 @@ import yt_dlp
 from yt_dlp.postprocessor.common import PostProcessor
 from yt_dlp.utils import DownloadCancelled, DownloadError
 
+from ..i18n import t
 from . import accounts, media, spotify
 from .net import meta, session
 from .paths import app_dir, ffmpeg_exe
@@ -73,22 +74,22 @@ def humanize(err: BaseException | str) -> str:
     msg = _clean(err)
     low = msg.lower()
     if "[tiktok]" in raw.lower() and "unexpected response" in low:
-        return "TikTok isteği geri çevirdi. Biraz bekleyip tekrar dene."
+        return t("TikTok isteği geri çevirdi. Biraz bekleyip tekrar dene.")
     if "unsupported url" in low:
-        return "Bu bağlantı desteklenmiyor."
+        return t("Bu bağlantı desteklenmiyor.")
     if "drm" in low:
-        return "Bu içerik DRM korumalı, indirilemez."
+        return t("Bu içerik DRM korumalı, indirilemez.")
     if "[reddit]" in raw.lower() and needs_login(err):
-        return "Reddit videoları için Reddit hesabıyla giriş gerekiyor."
+        return t("Reddit videoları için Reddit hesabıyla giriş gerekiyor.")
     if "[facebook]" in raw.lower() and needs_login(err):
-        return "Facebook bu videoyu giriş yapmadan göstermiyor."
+        return t("Facebook bu videoyu giriş yapmadan göstermiyor.")
     if "[instagram]" in raw.lower() and needs_login(err):
-        return "Instagram bu gönderiyi giriş yapmadan göstermiyor."
+        return t("Instagram bu gönderiyi giriş yapmadan göstermiyor.")
     if needs_login(err):
-        return "Bu içerik için giriş gerekiyor."
+        return t("Bu içerik için giriş gerekiyor.")
     if "404" in low or "does not exist" in low:
-        return "İçerik bulunamadı. Silinmiş ya da gizli olabilir."
-    return msg.split("\n")[0][:220] or "Bilinmeyen hata."
+        return t("İçerik bulunamadı. Silinmiş ya da gizli olabilir.")
+    return msg.split("\n")[0][:220] or t("Bilinmeyen hata.")
 
 
 class _Log:
@@ -113,11 +114,11 @@ class _TrackMeta(PostProcessor):
         self.track = track
 
     def run(self, info):
-        t = self.track
-        info.update(title=f"{t.artist} - {t.title}", track=t.title, artist=t.artist,
-                    artists=[t.artist], album=t.album or None)
-        if t.cover:
-            info["thumbnails"] = [{"url": t.cover, "id": "spotify"}]
+        tr = self.track
+        info.update(title=f"{tr.artist} - {tr.title}", track=tr.title, artist=tr.artist,
+                    artists=[tr.artist], album=tr.album or None)
+        if tr.cover:
+            info["thumbnails"] = [{"url": tr.cover, "id": "spotify"}]
         return [], info
 
 
@@ -138,17 +139,17 @@ class _Finish(PostProcessor):
         if path and req.trimming:
             duration = info.get("duration")
             if duration and req.start and req.start >= duration:
-                raise DownloadError(f"Başlangıç ({media.format_time(req.start)}) içeriğin süresini aşıyor.")
+                raise DownloadError(t("Başlangıç ({time}) içeriğin süresini aşıyor.", time=media.format_time(req.start)))
             media.trim(path, req.start, req.end)
         # cover art goes in last so trimming can't drop it; ffmpeg only, no ffprobe needed
-        thumbs = [t["filepath"] for t in info.get("thumbnails") or []
-                  if t.get("filepath") and Path(t["filepath"]).exists()]
+        thumbs = [th["filepath"] for th in info.get("thumbnails") or []
+                  if th.get("filepath") and Path(th["filepath"]).exists()]
         if path and thumbs:
             try:
                 media.embed_cover(path, thumbs[-1])
             finally:
-                for t in thumbs:
-                    Path(t).unlink(missing_ok=True)
+                for thumb in thumbs:
+                    Path(thumb).unlink(missing_ok=True)
         if path:
             self.owner.outputs.append(path)
         return [], info
@@ -195,7 +196,7 @@ class Downloader:
         if self._cancel.is_set():
             raise Cancelled()
         if not self.outputs:
-            raise DownloadError(self.errors[-1] if self.errors else "Hiçbir dosya indirilemedi.")
+            raise DownloadError(self.errors[-1] if self.errors else t("Hiçbir dosya indirilemedi."))
         return self.outputs
 
     # ------------------------------------------------------------ yt-dlp
@@ -204,8 +205,8 @@ class Downloader:
         r = self.req
         if r.trimming:
             a = media.format_time(r.start or 0).replace(":", ".")
-            b = media.format_time(r.end).replace(":", ".") if r.end is not None else "son"
-            base += f" (kesit {a}-{b})"
+            b = media.format_time(r.end).replace(":", ".") if r.end is not None else t("son")
+            base += f" ({t('kesit')} {a}-{b})"
         return base + ".%(ext)s"
 
     def _options(self, outtmpl: str) -> dict:
@@ -269,7 +270,7 @@ class Downloader:
         r.mode = "audio"
         if r.fmt not in AUDIO_FORMATS:
             r.fmt, r.quality = "mp3", "320"
-        self.emit("status", "Spotify bilgileri okunuyor")
+        self.emit("status", t("Spotify bilgileri okunuyor"))
         loaders = spotify.resolve(url, session())
         many = len(loaders) > 1
         self._fixed_title = True
@@ -290,12 +291,12 @@ class Downloader:
                 self.errors.append(f"{track.title}: {humanize(e)}")
 
     def _threads_media(self, url: str) -> str:
-        self.emit("status", "Threads gönderisi okunuyor")
+        self.emit("status", t("Threads gönderisi okunuyor"))
         page = session(self.req.cookies_browser).get(url, timeout=15).text
         media_url = meta(page, "og:video:secure_url") or meta(page, "og:video")
         if not media_url:
-            raise DownloadError("Threads gönderisinde video bulunamadı. Gönderi gizli olabilir; "
-                                "giriş yapıp tekrar dene.")
+            raise DownloadError(t("Threads gönderisinde video bulunamadı. Gönderi gizli olabilir; "
+                                  "giriş yapıp tekrar dene."))
         return media_url
 
     # ------------------------------------------------------------ hooks
@@ -317,12 +318,12 @@ class Downloader:
             done = d.get("downloaded_bytes") or 0
             parts = [f"{media.format_size(done)} / {media.format_size(total)}"]
             if d.get("speed"):
-                parts.append(f"{media.format_size(d['speed'])}/sn")
+                parts.append(t("{size}/sn", size=media.format_size(d["speed"])))
             if d.get("eta") is not None:
-                parts.append(f"{media.format_time(d['eta'])} kaldı")
+                parts.append(t("{time} kaldı", time=media.format_time(d["eta"])))
             self.emit("progress", done / total if total else None, "  ·  ".join(parts))
         elif d["status"] == "finished":
-            self.emit("progress", 1.0, "İşleniyor")
+            self.emit("progress", 1.0, t("İşleniyor"))
 
     def _on_pp(self, d):
         if self._cancel.is_set():
@@ -333,4 +334,4 @@ class Downloader:
             if key == "ZcFinish" and not self.req.trimming:
                 label = None
             if label:
-                self.emit("status", label)
+                self.emit("status", t(label))

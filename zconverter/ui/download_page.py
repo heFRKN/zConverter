@@ -14,8 +14,10 @@ from ..core.media import format_time
 from ..core.net import session
 from ..core.platforms import PLATFORMS, detect, normalize_url
 from ..core.settings import Settings
+from ..i18n import t
 from . import icons, theme
 from .jobs import Job, JobManager, run_async
+from .location import SaveLocation, open_folder
 from .login_dialog import sign_in
 from .trim_editor import TrimEditor
 from .widgets import (Badge, Card, ElidedLabel, ProgressLine, Segmented, Thumb, Toggle, field, hbox,
@@ -38,17 +40,17 @@ class JobRow(Card):
 
         self.title = ElidedLabel(job.req.url)
         self.title.setStyleSheet("font-weight: 600;")
-        self.status = ElidedLabel("Sırada")
+        self.status = ElidedLabel(t("Sırada"), middle=True)
         self.status.setObjectName("Caption")
         self.bar = ProgressLine()
 
-        self.btn_auth = QPushButton(" Giriş yap")
+        self.btn_auth = QPushButton(" " + t("Giriş yap"))
         self.btn_auth.setIcon(icons.icon("key", theme.TEXT_2))
         self.btn_auth.setIconSize(QSize(15, 15))
         self.btn_auth.setMinimumHeight(30)
-        self.btn_open = icon_button("folder", "Klasörde göster")
-        self.btn_retry = icon_button("retry", "Tekrar dene")
-        self.btn_x = icon_button("x", "İptal et")
+        self.btn_open = icon_button("folder", t("Klasörde göster"))
+        self.btn_retry = icon_button("retry", t("Tekrar dene"))
+        self.btn_x = icon_button("x", t("İptal et"))
         for b in (self.btn_auth, self.btn_open, self.btn_retry):
             b.hide()
         self.btn_auth.clicked.connect(self._auth)
@@ -63,10 +65,10 @@ class JobRow(Card):
         mid.addSpacing(3)
         mid.addWidget(self.bar)
         r = job.req
-        kind = "Ses" if r.mode == "audio" else "Video"
+        kind = t("Ses") if r.mode == "audio" else t("Video")
         extra = ""
         if r.trimming:
-            extra = f" · {format_time(r.start or 0)}–{format_time(r.end) if r.end is not None else 'son'}"
+            extra = f" · {format_time(r.start or 0)}–{format_time(r.end) if r.end is not None else t('son')}"
         meta = label(f"{kind} · {r.fmt.upper()}{extra}", "Caption")
         self.layout().addLayout(hbox(Badge(p.badge if p else "?"), 4, mid, 14, meta, self.btn_auth,
                                      self.btn_retry, self.btn_open, self.btn_x, spacing=8, stretch=(mid,)))
@@ -87,12 +89,12 @@ class JobRow(Card):
         self.bar.set_value(value)
 
     def _finished(self):
-        self.btn_x.setToolTip("Listeden kaldır")
+        self.btn_x.setToolTip(t("Listeden kaldır"))
 
     def _done(self, paths):
         self.paths = paths
         n = len(paths)
-        self.status.setText(f"Tamamlandı · {n} dosya" if n > 1 else "Tamamlandı · " + Path(paths[0]).name)
+        self.status.setText(t("Tamamlandı · {n} dosya", n=n) if n > 1 else t("Tamamlandı") + " · " + str(Path(paths[0])))
         self.bar.set_value(1.0)
         self.btn_open.show()
         self._finished()
@@ -107,7 +109,7 @@ class JobRow(Card):
         self._finished()
 
     def _cancelled(self):
-        self.status.setText("İptal edildi")
+        self.status.setText(t("İptal edildi"))
         self.bar.set_value(0)
         self.btn_retry.show()
         self._finished()
@@ -154,8 +156,8 @@ class DownloadPage(QWidget):
         root = QVBoxLayout(body)
         root.setContentsMargins(36, 30, 36, 28)
         root.setSpacing(6)
-        root.addWidget(label("İndir", "H1"))
-        root.addWidget(label("Bağlantıyı yapıştır. Önizleme gelince biçimi seç, istersen kırp.", "Sub"))
+        root.addWidget(label(t("İndir"), "H1"))
+        root.addWidget(label(t("Bağlantıyı yapıştır. Önizleme gelince biçimi seç, istersen kırp."), "Sub"))
         root.addSpacing(14)
 
         # ---------------- link
@@ -164,11 +166,11 @@ class DownloadPage(QWidget):
         root.addWidget(link)
         self.url = QLineEdit()
         self.url.setObjectName("Hero")
-        self.url.setPlaceholderText("Bağlantıyı buraya yapıştır")
+        self.url.setPlaceholderText(t("Bağlantıyı buraya yapıştır"))
         self.url.setClearButtonEnabled(True)
         self.url.textChanged.connect(self._on_url)
         self.url.returnPressed.connect(self._probe_now)
-        paste = QPushButton(" Yapıştır")
+        paste = QPushButton(" " + t("Yapıştır"))
         paste.setIcon(icons.icon("paste", theme.TEXT_2))
         paste.setIconSize(QSize(15, 15))
         paste.setMinimumHeight(42)
@@ -182,6 +184,7 @@ class DownloadPage(QWidget):
         self.busy = ProgressLine()
         self.busy.hide()
         link.layout().addWidget(self.busy)
+        link.layout().addWidget(SaveLocation(settings))
 
         # ---------------- preview + options + trim
         self.card = Card(padding=20)
@@ -196,7 +199,7 @@ class DownloadPage(QWidget):
         self.meta = label("", "Caption", wrap=True)
         self.note = label("", "Caption", wrap=True)
         self.error = label("", "Error", wrap=True)
-        self.auth = QPushButton(" Giriş yap ve tekrar dene")
+        self.auth = QPushButton(" " + t("Giriş yap ve tekrar dene"))
         self.auth.setIcon(icons.icon("key", theme.TEXT_2))
         self.auth.setIconSize(QSize(15, 15))
         self.auth.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -211,59 +214,58 @@ class DownloadPage(QWidget):
         info_col.addStretch(1)
         c.addLayout(hbox(self.thumb, 6, info_col, spacing=12, stretch=(info_col,)))
 
-        self.mode = Segmented(["Video", "Ses"])
+        self.mode = Segmented([t("Video"), t("Ses")])
         self.mode.changed.connect(self._on_mode)
         self.quality = QComboBox()
         self.quality.setMinimumWidth(130)
         self.fmt = QComboBox()
         self.fmt.setMinimumWidth(96)
         self.fmt.currentTextChanged.connect(self._on_fmt)
-        self.cover = Toggle("Kapak ve etiketler", checked=True)
-        self.playlist = Toggle("Tüm listeyi indir")
+        self.cover = Toggle(t("Kapak ve etiketler"), checked=True)
+        self.playlist = Toggle(t("Tüm listeyi indir"))
         self.playlist.toggled.connect(lambda _: self._probe_now())
         toggles = QVBoxLayout()
         toggles.setSpacing(8)
         toggles.addSpacing(18)
         toggles.addWidget(self.cover)
         toggles.addWidget(self.playlist)
-        c.addLayout(hbox(field("Tür", self.mode), field("Kalite", self.quality), field("Biçim", self.fmt),
+        c.addLayout(hbox(field(t("Tür"), self.mode), field(t("Kalite"), self.quality), field(t("Biçim"), self.fmt),
                          12, toggles, None, spacing=14))
 
         self.trim_box = QWidget()
         tb = QVBoxLayout(self.trim_box)
         tb.setContentsMargins(0, 4, 0, 0)
         tb.setSpacing(10)
-        tb.addLayout(hbox(label("KIRP", "Section"),
-                          label("Tutamakları sürükle ya da zamanı yaz. Seçili aralık indirilir.", "Caption"),
+        tb.addLayout(hbox(label(t("Kırp").upper(), "Section"),
+                          label(t("Tutamakları sürükle ya da zamanı yaz. Seçili aralık indirilir."), "Caption"),
                           None, spacing=10))
         self.editor = TrimEditor()
         tb.addWidget(self.editor)
         c.addWidget(self.trim_box)
 
-        self.go = QPushButton("İndir")
+        self.go = QPushButton(t("İndir"))
         self.go.setObjectName("Primary")
         self.go.setIcon(icons.icon("download", "#FFFFFF"))
         self.go.setIconSize(QSize(16, 16))
         self.go.setCursor(Qt.CursorShape.PointingHandCursor)
         self.go.clicked.connect(self.start)
-        self.save_to = label("", "Caption")
-        c.addLayout(hbox(self.save_to, None, self.go))
+        c.addLayout(hbox(None, self.go))
 
         # ---------------- queue
         root.addSpacing(20)
-        clear = QPushButton("Bitenleri temizle")
+        clear = QPushButton(t("Bitenleri temizle"))
         clear.setObjectName("Link")
         clear.setCursor(Qt.CursorShape.PointingHandCursor)
         clear.clicked.connect(self._clear_finished)
-        open_dir = QPushButton("Klasörü aç")
+        open_dir = QPushButton(t("Klasörü aç"))
         open_dir.setObjectName("Link")
         open_dir.setCursor(Qt.CursorShape.PointingHandCursor)
         open_dir.clicked.connect(self._open_output)
-        root.addLayout(hbox(label("KUYRUK", "Section"), None, open_dir, 14, clear))
+        root.addLayout(hbox(label(t("Kuyruk").upper(), "Section"), None, open_dir, 14, clear))
         root.addSpacing(6)
         self.list_lay = QVBoxLayout()
         self.list_lay.setSpacing(6)
-        self.empty = label("Henüz bir şey yok. İndirdiklerin burada görünecek.", "Caption")
+        self.empty = label(t("Henüz bir şey yok. İndirdiklerin burada görünecek."), "Caption")
         self.empty.setMinimumHeight(48)
         self.list_lay.addWidget(self.empty)
         root.addLayout(self.list_lay)
@@ -288,7 +290,7 @@ class DownloadPage(QWidget):
         self.chip.setVisible(bool(p))
         self.chip.setText(p.name if p else "")
         self.link_status.setText(SUPPORTED if not text.strip() else ("" if p else
-                                 "Bu bağlantı desteklenen platformlardan birine ait değil."))
+                                 t("Bu bağlantı desteklenen platformlardan birine ait değil.")))
         audio_only = bool(p and p.audio_only)
         self.mode.set_disabled(0, audio_only)
         if audio_only and self.mode.index() == 0:
@@ -315,7 +317,7 @@ class DownloadPage(QWidget):
         gen = self._probe_gen
         self.busy.show()
         self.busy.set_value(None)
-        self.link_status.setText("Bilgiler alınıyor")
+        self.link_status.setText(t("Bilgiler alınıyor"))
         self.playlist.setVisible(_looks_like_list(url))
         cookies, playlist = self.settings.cookies_browser, self.playlist.isChecked()
         run_async(lambda: probe.probe(url, cookies, playlist),
@@ -328,11 +330,11 @@ class DownloadPage(QWidget):
         self.link_status.setText("")
         self.error.hide()
         self.auth.hide()
-        self.title.setText(info.title or "Başlıksız")
+        self.title.setText(info.title or t("Başlıksız"))
         meta = [x for x in (info.uploader, PLATFORMS[info.platform].name if info.platform in PLATFORMS else "")
                 if x]
         if info.count > 1:
-            meta.insert(0, f"{info.count} öğe")
+            meta.insert(0, t("{n} öğe", n=info.count))
             self.playlist.setVisible(True)
         if info.duration:
             meta.insert(0, format_time(info.duration))
@@ -351,19 +353,18 @@ class DownloadPage(QWidget):
         self.info = None
         self.busy.hide()
         self.link_status.setText("")
-        self.title.setText("Önizleme alınamadı")
+        self.title.setText(t("Önizleme alınamadı"))
         self.meta.setText(url)
         self.note.hide()
         self.error.setText(humanize(err))
         self.error.show()
         self.auth.setVisible(needs_login(err))
-        self.thumb.set_pixmap(None, "Önizleme yok")
+        self.thumb.set_pixmap(None, t("Önizleme yok"))
         self.trim_box.hide()
         self.editor.stop()
         self._show_card()
 
     def _show_card(self):
-        self.save_to.setText("Kayıt yeri: " + self.settings.output_dir)
         self.card.show()
 
     def _load_thumb(self, url: str | None):
@@ -391,7 +392,7 @@ class DownloadPage(QWidget):
         audio = index == 1
         self.quality.clear()
         for key, text in (dl.AUDIO_QUALITIES if audio else dl.VIDEO_QUALITIES):
-            self.quality.addItem(text, key)
+            self.quality.addItem(t(text), key)
         self.fmt.clear()
         self.fmt.addItems(dl.AUDIO_FORMATS if audio else dl.VIDEO_FORMATS)
         self.cover.setVisible(audio)
@@ -401,7 +402,7 @@ class DownloadPage(QWidget):
         audio = self.mode.index() == 1
         self.quality.setEnabled(not (audio and fmt in ("flac", "wav")))
         self.cover.setEnabled(fmt in dl.COVER_FORMATS)
-        self.cover.setToolTip("" if fmt in dl.COVER_FORMATS else "Kapak gömme yalnızca MP3 ve M4A için.")
+        self.cover.setToolTip("" if fmt in dl.COVER_FORMATS else t("Kapak gömme yalnızca MP3 ve M4A için."))
 
     # ------------------------------------------------------------ actions
 
@@ -454,5 +455,4 @@ class DownloadPage(QWidget):
             self.remove(row)
 
     def _open_output(self):
-        Path(self.settings.output_dir).mkdir(parents=True, exist_ok=True)
-        QDesktopServices.openUrl(QUrl.fromLocalFile(self.settings.output_dir))
+        open_folder(self.settings.output_dir)

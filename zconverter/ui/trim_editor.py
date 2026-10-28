@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QGridLayout, QLineEdit, QPushButton, QSizePolicy, 
 
 from ..core import media, probe
 from ..core.paths import app_dir
+from ..i18n import t
 from . import icons, theme
 from .jobs import run_async
 from .widgets import Thumb, hbox, label
@@ -78,9 +79,9 @@ class RangeTimeline(QWidget):
         x = e.position().x()
         hit = self._hit(x)
         if hit is None:  # click outside: move the closer handle there
-            t = self._t(x)
-            hit = "start" if abs(t - self.start) < abs(t - self.end) else "end"
-            self._apply(hit, t)
+            at = self._t(x)
+            hit = "start" if abs(at - self.start) < abs(at - self.end) else "end"
+            self._apply(hit, at)
         self._drag = hit
         self._grab = self._t(x) - self.start
 
@@ -98,14 +99,14 @@ class RangeTimeline(QWidget):
             self.released.emit(self._drag)
         self._drag = None
 
-    def _apply(self, which: str, t: float):
+    def _apply(self, which: str, at: float):
         if which == "start":
-            self.start = max(0.0, min(t, self.end - MIN_LEN))
+            self.start = max(0.0, min(at, self.end - MIN_LEN))
         elif which == "end":
-            self.end = min(self.duration, max(t, self.start + MIN_LEN))
+            self.end = min(self.duration, max(at, self.start + MIN_LEN))
         else:
             length = self.end - self.start
-            s = max(0.0, min(t - self._grab, self.duration - length))
+            s = max(0.0, min(at - self._grab, self.duration - length))
             self.start, self.end = s, s + length
         self.update()
         self.changed.emit(which)
@@ -139,8 +140,8 @@ class RangeTimeline(QWidget):
             p.setPen(Qt.PenStyle.NoPen)
             for i, v in enumerate(self.wave):
                 x = r.left() + i * bw
-                t = (i + 0.5) / n * self.duration
-                inside = self.start <= t <= self.end
+                at = (i + 0.5) / n * self.duration
+                inside = self.start <= at <= self.end
                 p.setBrush(QColor(theme.TEXT_2 if inside else theme.TEXT_3))
                 h = max(1.5, v * (r.height() - 8))
                 p.drawRect(QRectF(x, mid - h / 2, max(1.0, bw - 1), h))
@@ -176,7 +177,7 @@ class _CutView(QWidget):
         self.thumb = Thumb(320, 180)
         self.title = label(title.upper(), "Section")
         self.time = label("0:00.0", "Time")
-        self.listen = QPushButton(" Dinle")
+        self.listen = QPushButton(" " + t("Dinle"))
         self.listen.setIcon(icons.icon("play", theme.TEXT_2))
         self.listen.setIconSize(QSize(13, 13))
         self.listen.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -200,8 +201,8 @@ class TrimEditor(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
         lay.setSpacing(12)
 
-        self.cut_start = _CutView("Başlangıç")
-        self.cut_end = _CutView("Bitiş")
+        self.cut_start = _CutView(t("Başlangıç"))
+        self.cut_end = _CutView(t("Bitiş"))
         self.cuts = QWidget()
         grid = QGridLayout(self.cuts)
         grid.setContentsMargins(0, 0, 0, 0)
@@ -223,11 +224,11 @@ class TrimEditor(QWidget):
         for w in (self.start_edit, self.end_edit):
             w.setFixedWidth(96)
             w.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            w.setToolTip("Örnek: 1:30 ya da 1:30.5")
+            w.setToolTip(t("Örnek: 1:30 ya da 1:30.5"))
             w.editingFinished.connect(self._on_typed)
         self.length = label("", "Muted")
         self.status = label("", "Caption")
-        reset = QPushButton("Tamamını al")
+        reset = QPushButton(t("Tamamını al"))
         reset.setObjectName("Link")
         reset.setCursor(Qt.CursorShape.PointingHandCursor)
         reset.clicked.connect(self.reset_range)
@@ -253,7 +254,7 @@ class TrimEditor(QWidget):
         self.cuts.setVisible(has_video or has_audio)
         for cut in (self.cut_start, self.cut_end):
             cut.thumb.setVisible(has_video)
-            cut.thumb.set_pixmap(None, "Yükleniyor")
+            cut.thumb.set_pixmap(None, t("Yükleniyor"))
             cut.listen.setVisible(has_audio)
         self._sync()
         if has_video:
@@ -262,7 +263,7 @@ class TrimEditor(QWidget):
             self._load_filmstrip()
         elif info.audio:
             self._load_wave()
-        self.status.setText("" if (has_video or info.audio) else "Önizleme yok")
+        self.status.setText("" if (has_video or info.audio) else t("Önizleme yok"))
 
     def range(self) -> tuple[float | None, float | None]:
         """None for an untouched edge, so the full item is kept."""
@@ -292,8 +293,8 @@ class TrimEditor(QWidget):
         self.cut_start.time.setText(media.format_precise(tl.start))
         self.cut_end.time.setText(media.format_precise(tl.end))
         whole = tl.start <= 0.05 and tl.end >= tl.duration - 0.05
-        self.length.setText("Tamamı · " + media.format_precise(tl.duration) if whole
-                            else "Seçim · " + media.format_precise(tl.end - tl.start))
+        self.length.setText(t("Tamamı") + " · " + media.format_precise(tl.duration) if whole
+                            else t("Seçim") + " · " + media.format_precise(tl.end - tl.start))
 
     def _on_drag(self, which: str):
         self._sync()
@@ -326,8 +327,8 @@ class TrimEditor(QWidget):
             return
         tl = self.timeline
         # the last frame sits just before the end point
-        t = tl.start if which == "start" else max(tl.start, tl.end - 0.1)
-        key = round(t, 1)
+        at = tl.start if which == "start" else max(tl.start, tl.end - 0.1)
+        key = round(at, 1)
         view = self.cut_start if which == "start" else self.cut_end
         if key in self._cache:
             view.thumb.set_pixmap(self._cache[key])
@@ -345,28 +346,28 @@ class TrimEditor(QWidget):
 
         def err(_):
             if gen == self._gen:
-                view.thumb.set_pixmap(None, "Kare alınamadı")
+                view.thumb.set_pixmap(None, t("Kare alınamadı"))
 
-        run_async(lambda: probe.frame(info.video, t), ok, err, self, pool=self.pool, priority=10)
+        run_async(lambda: probe.frame(info.video, at), ok, err, self, pool=self.pool, priority=10)
 
     def _load_filmstrip(self):
         info, gen = self.info, self._gen
         d = info.duration
         self.timeline.frames = [None] * FILMSTRIP
         for i in range(FILMSTRIP):
-            t = (i + 0.5) * d / FILMSTRIP
+            at = (i + 0.5) * d / FILMSTRIP
 
             def ok(data, i=i):
                 if gen == self._gen:
                     self.timeline.frames[i] = _px(data)
                     self.timeline.update()
 
-            run_async(lambda t=t: probe.frame(info.video, t, width=200), ok, lambda _: None, self,
+            run_async(lambda at=at: probe.frame(info.video, at, width=200), ok, lambda _: None, self,
                       pool=self.pool, priority=0)
 
     def _load_wave(self):
         info, gen = self.info, self._gen
-        self.status.setText("Dalga formu hazırlanıyor")
+        self.status.setText(t("Dalga formu hazırlanıyor"))
 
         def ok(wave):
             if gen == self._gen:
@@ -376,7 +377,7 @@ class TrimEditor(QWidget):
 
         def err(_):
             if gen == self._gen:
-                self.status.setText("Dalga formu alınamadı")
+                self.status.setText(t("Dalga formu alınamadı"))
 
         run_async(lambda: probe.waveform(info.audio), ok, err, self, pool=self.pool)
 
@@ -386,7 +387,7 @@ class TrimEditor(QWidget):
         self._playing = which
         for w, cut in (("start", self.cut_start), ("end", self.cut_end)):
             on = which == w
-            cut.listen.setText(" Durdur" if on else " Dinle")
+            cut.listen.setText(" " + (t("Durdur") if on else t("Dinle")))
             cut.listen.setIcon(icons.icon("stop" if on else "play", theme.TEXT if on else theme.TEXT_2))
 
     def _listen(self, which: str):
@@ -406,7 +407,7 @@ class TrimEditor(QWidget):
         (app_dir() / "cache").mkdir(exist_ok=True)
         n = self._play_n
         view = self.cut_start if which == "start" else self.cut_end
-        view.listen.setText(" Hazırlanıyor")
+        view.listen.setText(" " + t("Hazırlanıyor"))
 
         def ok(p):
             if n != self._play_n:
@@ -418,7 +419,7 @@ class TrimEditor(QWidget):
         def err(_):
             if n == self._play_n:
                 self._set_playing(None)
-                self.status.setText("Ses önizlemesi alınamadı")
+                self.status.setText(t("Ses önizlemesi alınamadı"))
 
         run_async(lambda: probe.clip(self.info.audio, start, length, path), ok, err, self, pool=self.pool,
                   priority=20)

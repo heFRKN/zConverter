@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QDialog, QPushButton, QVBoxLayout, QWidget
 
 from ..core import accounts
 from ..core.settings import Settings
+from ..i18n import t
 from .widgets import hbox, label
 
 
@@ -18,7 +19,7 @@ class LoginDialog(QDialog):
 
         self.platform = platform
         name, url, domains, _ = accounts.PLATFORMS[platform]
-        self.setWindowTitle(f"{name} girişi")
+        self.setWindowTitle(t("{name} girişi", name=name))
         self.resize(1000, 760)
         self._cookies: dict[tuple, dict] = {}
 
@@ -27,18 +28,18 @@ class LoginDialog(QDialog):
         lay.setSpacing(0)
         bar = QWidget()
         bar.setObjectName("Sidebar")
-        self.status = label("Giriş yapınca pencere kendiliğinden kapanır.", "Caption")
-        done = QPushButton("Bitti")
+        self.status = label(t("Giriş yapınca pencere kendiliğinden kapanır."), "Caption")
+        done = QPushButton(t("Bitti"))
         done.setObjectName("Primary")
         done.setCursor(Qt.CursorShape.PointingHandCursor)
         done.clicked.connect(self._finish)
-        cancel = QPushButton("Vazgeç")
+        cancel = QPushButton(t("Vazgeç"))
         cancel.clicked.connect(self.reject)
         info = QVBoxLayout()
         info.setSpacing(2)
-        info.addWidget(label(f"{name} hesabına giriş", "H2"))
-        info.addWidget(label(f"Giriş doğrudan {domains[0]} sayfasında yapılır; şifren uygulamaya geçmez. "
-                             "Oturum bu bilgisayarda şifreli saklanır.", "Caption"))
+        info.addWidget(label(t("{name} hesabına giriş", name=name), "H2"))
+        info.addWidget(label(t("Giriş doğrudan {site} sayfasında yapılır; şifren uygulamaya geçmez. "
+                               "Oturum bu bilgisayarda şifreli saklanır.", site=domains[0]), "Caption"))
         bar.setLayout(hbox(info, None, self.status, 12, cancel, done, margins=(18, 12, 18, 12)))
         lay.addWidget(bar)
 
@@ -106,7 +107,7 @@ class LoginDialog(QDialog):
         self._cookies[(c["domain"], c["path"], c["name"])] = c
         if (accounts.is_signed_in_cookie(self.platform, c["name"]) and c["value"]
                 and c["value"] not in self._old_marker):
-            self.status.setText("Giriş yapıldı")
+            self.status.setText(t("Giriş yapıldı"))
             QTimer.singleShot(1200, self._finish)
 
     def _removed(self, qc: QNetworkCookie):

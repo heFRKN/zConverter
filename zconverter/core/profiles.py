@@ -7,12 +7,13 @@ from urllib.parse import parse_qs, urlparse
 
 import requests
 
+from ..i18n import t
 from . import accounts
 from .net import NetError, json_string, meta, session
 from .paths import app_dir
 from .platforms import PLATFORMS, detect, normalize_url
 
-LOGIN_HINT = "Giriş yapıp tekrar dene."
+LOGIN_HINT = t("Giriş yapıp tekrar dene.")
 
 
 class ProfileError(Exception):
@@ -42,7 +43,7 @@ def parse_input(text: str, platform: str) -> tuple[str, str]:
     """Return (platform_key, handle_or_url). URLs override the selected platform."""
     text = text.strip()
     if not text:
-        raise ProfileError("Kullanıcı adı ya da profil bağlantısı gir.")
+        raise ProfileError(t("Kullanıcı adı ya da profil bağlantısı gir."))
     short_reddit = re.fullmatch(r"/?(r|u|user)/([\w-]+)/?", text)
     if short_reddit:
         kind, name = short_reddit.groups()
@@ -51,16 +52,16 @@ def parse_input(text: str, platform: str) -> tuple[str, str]:
         url = normalize_url(text)
         p = detect(url)
         if not p or p.key not in ("youtube", "instagram", "twitter", "threads", "reddit", "facebook"):
-            raise ProfileError("Bu bağlantı desteklenen bir profil platformuna ait değil.")
+            raise ProfileError(t("Bu bağlantı desteklenen bir profil platformuna ait değil."))
         if p.key in ("youtube", "facebook"):
             return p.key, url
         path = [s for s in urlparse(url).path.split("/") if s]
         if p.key == "reddit":
             if len(path) >= 2 and path[0] in ("r", "u", "user"):
                 return p.key, ("r/" if path[0] == "r" else "u/") + path[1]
-            raise ProfileError("Reddit bağlantısı /r/… ya da /user/… olmalı.")
+            raise ProfileError(t("Reddit bağlantısı /r/… ya da /user/… olmalı."))
         if not path:
-            raise ProfileError("Bağlantıda kullanıcı adı yok.")
+            raise ProfileError(t("Bağlantıda kullanıcı adı yok."))
         return p.key, path[0].lstrip("@")
     handle = text.lstrip("@")
     if platform == "reddit" and not handle.startswith(("r/", "u/")):
@@ -90,9 +91,9 @@ def _youtube(target: str, cookies: str) -> Profile:
             accounts.apply(ydl.cookiejar)
             info = ydl.extract_info(url, download=False)
     except Exception as e:
-        raise ProfileError("YouTube kanalı bulunamadı.") from e
+        raise ProfileError(t("YouTube kanalı bulunamadı.")) from e
     thumbs = info.get("thumbnails") or []
-    by_id = {t.get("id"): t["url"] for t in thumbs if t.get("url")}
+    by_id = {th.get("id"): th["url"] for th in thumbs if th.get("url")}
     avatar = by_id.get("avatar_uncropped")
     banner = by_id.get("banner_uncropped")
     prof = Profile("youtube", info.get("uploader_id") or info.get("channel") or target,
@@ -114,7 +115,7 @@ def _twitter(handle: str, cookies: str) -> Profile:
         if user or r.status_code != 404:
             break
     if not user:
-        raise ProfileError("X hesabı bulunamadı ya da askıya alınmış.")
+        raise ProfileError(t("X hesabı bulunamadı ya da askıya alınmış."))
     prof = Profile("twitter", user.get("screen_name") or handle, user.get("name") or "")
     if user.get("avatar_url"):
         small = user["avatar_url"]
@@ -128,24 +129,24 @@ def _twitter(handle: str, cookies: str) -> Profile:
 def _instagram(handle: str, cookies: str, platform: str = "instagram") -> Profile:
     r = session(cookies).get(f"https://www.instagram.com/{handle}/", timeout=15)
     if r.status_code == 404:
-        raise ProfileError("Instagram hesabı bulunamadı.")
+        raise ProfileError(t("Instagram hesabı bulunamadı."))
     page = r.text
     hd = json_string(page, "profile_pic_url_hd")
     og = meta(page, "og:image")
     if not hd and not og:
-        raise ProfileError("Instagram profili okunamadı. " + LOGIN_HINT)
+        raise ProfileError(t("Instagram profili okunamadı.") + " " + LOGIN_HINT)
     title = meta(page, "og:title") or ""
     prof = Profile(platform, handle, re.sub(r"\s*\(@.*$", "", title))
     prof.avatar = Asset("avatar", [u for u in (hd, og) if u])
     if not hd and not cookies:
-        prof.notes.append("Instagram oturum açmadan küçük boyut veriyor. Tam çözünürlük için: " + LOGIN_HINT)
+        prof.notes.append(t("Instagram giriş yapmadan sadece küçük boyut (100 px) veriyor. Tam boyut için:") + " " + LOGIN_HINT)
     return prof
 
 
 def _threads(handle: str, cookies: str) -> Profile:
     # A Threads profile is an Instagram account; its picture is the same image.
     prof = _instagram(handle, cookies, platform="threads")
-    prof.notes.insert(0, "Threads profil fotoğrafı bağlı Instagram hesabından alındı. Threads'te kapak görseli yok.")
+    prof.notes.insert(0, t("Threads profil fotoğrafı bağlı Instagram hesabından alındı. Threads'te kapak görseli yok."))
     return prof
 
 
@@ -154,9 +155,9 @@ def _reddit(handle: str, cookies: str) -> Profile:
     path = f"r/{name}" if kind == "r" else f"user/{name}"
     r = session(cookies).get(f"https://www.reddit.com/{path}/about.json", timeout=15)
     if r.status_code in (401, 403, 429) or "json" not in r.headers.get("content-type", ""):
-        raise ProfileError("Reddit oturum açmadan erişime izin vermiyor. " + LOGIN_HINT)
+        raise ProfileError(t("Reddit giriş yapmadan erişime izin vermiyor.") + " " + LOGIN_HINT)
     if r.status_code == 404:
-        raise ProfileError("Reddit hesabı ya da topluluğu bulunamadı.")
+        raise ProfileError(t("Reddit hesabı ya da topluluğu bulunamadı."))
     data = r.json().get("data") or {}
 
     def clean(u):
@@ -190,11 +191,11 @@ def _facebook(target: str, cookies: str) -> Profile:
     url = target if "://" in target else f"https://www.facebook.com/{target}"
     r = session(cookies).get(url, timeout=15)
     if r.status_code == 404:
-        raise ProfileError("Facebook sayfası bulunamadı.")
+        raise ProfileError(t("Facebook sayfası bulunamadı."))
     page = r.text
     avatar = meta(page, "og:image")
     if not avatar:
-        raise ProfileError("Facebook profili okunamadı. " + LOGIN_HINT)
+        raise ProfileError(t("Facebook profili okunamadı.") + " " + LOGIN_HINT)
     q = parse_qs(urlparse(url).query)
     handle = q.get("id", [None])[0] or [s for s in urlparse(url).path.split("/") if s][0]
     prof = Profile("facebook", handle, meta(page, "og:title") or "")
@@ -206,7 +207,7 @@ def _facebook(target: str, cookies: str) -> Profile:
     if cover:
         prof.banner = Asset("banner", [cover])
     else:
-        prof.notes.append("Facebook kapak görseli herkese açık sayfada yer almıyor. " + LOGIN_HINT)
+        prof.notes.append(t("Facebook kapak görseli herkese açık sayfada yer almıyor.") + " " + LOGIN_HINT)
     return prof
 
 
@@ -233,7 +234,7 @@ def fetch(text: str, platform: str, cookies_browser: str = "") -> Profile:
     except NetError as e:
         raise ProfileError(str(e)) from e
     except requests.RequestException as e:
-        raise ProfileError(f"{PLATFORMS[key].name} bağlantı hatası: {e.__class__.__name__}") from e
+        raise ProfileError(t("{name} bağlantı hatası: {error}", name=PLATFORMS[key].name, error=e.__class__.__name__)) from e
     for asset in (prof.avatar, prof.banner):
         if asset:
             _download(asset)
@@ -242,5 +243,5 @@ def fetch(text: str, platform: str, cookies_browser: str = "") -> Profile:
     if prof.banner and not prof.banner.data:
         prof.banner = None
     if not prof.avatar and not prof.banner:
-        raise ProfileError("Görsel bulunamadı.")
+        raise ProfileError(t("Görsel bulunamadı."))
     return prof

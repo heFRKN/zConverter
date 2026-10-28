@@ -9,7 +9,9 @@ from .. import AUTHOR, REPO_URL, __version__
 from ..core import accounts
 from ..core.paths import js_runtime
 from ..core.settings import Settings
+from ..i18n import language, restart_app, t
 from .jobs import JobManager
+from .location import change_folder, open_folder
 from .widgets import Card, ElidedLabel, Segmented, Toggle, hbox, label
 
 def _pkg_version(name: str) -> str:
@@ -48,18 +50,29 @@ class SettingsPage(QWidget):
         root = QVBoxLayout(body)
         root.setContentsMargins(40, 36, 40, 28)
         root.setSpacing(6)
-        root.addWidget(label("Ayarlar", "H1"))
-        root.addWidget(label("Her şey bu bilgisayarda kalır. Uygulama hiçbir veriyi bize göndermez.", "Sub"))
+        root.addWidget(label(t("Ayarlar"), "H1"))
+        root.addWidget(label(t("Her şey bu bilgisayarda kalır. Uygulama hiçbir veriyi bize göndermez."), "Sub"))
         root.addSpacing(18)
+
+        # language
+        self.language = Segmented(["Türkçe", "English"], height=34)
+        self.language.set_index(0 if language() == "tr" else 1, animate=False, emit=False)
+        self.language.changed.connect(self._on_language)
+        self.restart = QPushButton(t("Yeniden başlat"))
+        self.restart.setObjectName("Primary")
+        self.restart.clicked.connect(restart_app)
+        self.restart.hide()
+        root.addWidget(_card(t("Dil") + " / Language", hbox(self.language, 12, self.restart, None)))
+        root.addSpacing(12)
 
         # output folder
         self.path = ElidedLabel(settings.output_dir)
         self.path.setObjectName("Muted")
-        change = QPushButton("Değiştir")
+        change = QPushButton(t("Değiştir"))
         change.clicked.connect(self._pick_dir)
-        open_btn = QPushButton("Aç")
+        open_btn = QPushButton(t("Aç"))
         open_btn.clicked.connect(self._open_dir)
-        root.addWidget(_card("Kayıt yeri", hbox(self.path, change, open_btn, stretch=(self.path,))))
+        root.addWidget(_card(t("Kayıt yeri"), hbox(self.path, change, open_btn, stretch=(self.path,))))
         root.addSpacing(12)
 
         # accounts
@@ -75,14 +88,14 @@ class SettingsPage(QWidget):
             n.setFixedWidth(120)
             self.account_rows[key] = (status, btn)
             rows.append(hbox(n, status, None, btn))
-        self.firefox = Toggle("Firefox'taki açık oturumu kullan", checked=settings.cookies_browser == "firefox")
+        self.firefox = Toggle(t("Firefox'taki açık oturumu kullan"), checked=settings.cookies_browser == "firefox")
         self.firefox.toggled.connect(self._on_firefox)
         root.addWidget(_card(
-            "Hesaplar",
-            label("Gizli, yaş sınırlı ya da giriş isteyen içerikler (Reddit videoları gibi) için hesabına giriş yap. "
-                  "Giriş, platformun kendi sayfasında uygulamanın içinde yapılır; şifren uygulamaya geçmez. "
-                  "Oturum bu bilgisayarda Windows şifrelemesiyle saklanır ve sadece o platforma gönderilir. "
-                  "Sadece kendi hesabını kullan.", "Muted", wrap=True),
+            t("Hesaplar"),
+            label(t("Gizli, yaş sınırlı ya da giriş isteyen içerikler (Reddit videoları gibi) için hesabına giriş yap. "
+                    "Giriş, platformun kendi sayfasında uygulamanın içinde yapılır; şifren uygulamaya geçmez. "
+                    "Oturum bu bilgisayarda Windows şifrelemesiyle saklanır ve sadece o platforma gönderilir. "
+                    "Sadece kendi hesabını kullan."), "Muted", wrap=True),
             *rows,
             self.firefox,
         ))
@@ -93,29 +106,22 @@ class SettingsPage(QWidget):
         self.parallel = Segmented(["1", "2", "3", "4"], height=34)
         self.parallel.set_index(max(0, min(3, settings.parallel - 1)), animate=False, emit=False)
         self.parallel.changed.connect(self._on_parallel)
-        root.addWidget(_card("Aynı anda indirme", hbox(self.parallel, None)))
+        root.addWidget(_card(t("Aynı anda indirme"), hbox(self.parallel, None)))
         root.addSpacing(12)
 
         # components
         rt = js_runtime()
-        js_text = (f"{rt} bulundu" if rt else
-                   "Bulunamadı. YouTube'da bazı kaliteler eksik kalabilir. Kurmak için terminalde: "
-                   "winget install DenoLand.Deno")
-        root.addWidget(_card(
-            "Bileşenler",
-            self._row("yt-dlp", _pkg_version("yt-dlp")),
-            self._row("FFmpeg", "dahili (imageio-ffmpeg " + _pkg_version("imageio-ffmpeg") + ")"),
-            self._row("JavaScript çalışma ortamı", js_text),
-        ))
-        root.addSpacing(12)
+        js_text = (t("{name} bulundu", name=rt) if rt else
+                   t("Bulunamadı. YouTube'da bazı kaliteler eksik kalabilir. Kurmak için terminalde: ")
+                   + "winget install DenoLand.Deno")
 
-        gh = QPushButton("GitHub'da aç")
+        gh = QPushButton(t("GitHub'da aç"))
         gh.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
         root.addWidget(_card(
-            "Hakkında",
-            label(f"zConverter {__version__} · MIT Lisansı · © 2026 {AUTHOR}", "Muted"),
-            label("Bağımsız, açık kaynaklı bir projedir. Adı geçen platformların hiçbiriyle bağlantılı değildir, "
-                  "onlar tarafından desteklenmez veya onaylanmaz.", "Caption", wrap=True),
+            t("Hakkında"),
+            label(t("zConverter {version} · MIT Lisansı · © 2026 {author}", version=__version__, author=AUTHOR), "Muted"),
+            label(t("Bağımsız, açık kaynaklı bir projedir. Adı geçen platformların hiçbiriyle bağlantılı değildir, "
+                    "onlar tarafından desteklenmez veya onaylanmaz."), "Caption", wrap=True),
             hbox(gh, None),
         ))
         root.addStretch(1)
@@ -129,21 +135,17 @@ class SettingsPage(QWidget):
         return hbox(k, v, spacing=12, stretch=(v,))
 
     def _pick_dir(self):
-        path = QFileDialog.getExistingDirectory(self, "Kayıt yeri", self.settings.output_dir)
-        if path:
-            self.settings.output_dir = str(Path(path))
-            self.settings.save()
+        if change_folder(self, self.settings):
             self.path.setText(self.settings.output_dir)
 
     def _open_dir(self):
-        Path(self.settings.output_dir).mkdir(parents=True, exist_ok=True)
-        QDesktopServices.openUrl(QUrl.fromLocalFile(self.settings.output_dir))
+        open_folder(self.settings.output_dir)
 
     def _refresh_accounts(self):
         for key, (status, btn) in self.account_rows.items():
             on = accounts.signed_in(key)
-            status.setText("Bağlı" if on else "Bağlı değil")
-            btn.setText("Çıkış yap" if on else "Giriş yap")
+            status.setText(t("Bağlı") if on else t("Bağlı değil"))
+            btn.setText(t("Çıkış yap") if on else t("Giriş yap"))
 
     def _toggle_account(self, key: str):
         if accounts.signed_in(key):
@@ -155,7 +157,13 @@ class SettingsPage(QWidget):
 
     def showEvent(self, e):
         super().showEvent(e)
+        self.path.setText(self.settings.output_dir)
         self._refresh_accounts()  # a login from the download page may have happened meanwhile
+
+    def _on_language(self, index: int):
+        self.settings.language = "tr" if index == 0 else "en"
+        self.settings.save()
+        self.restart.setVisible(self.settings.language != language())
 
     def _on_firefox(self, on: bool):
         self.settings.cookies_browser = "firefox" if on else ""

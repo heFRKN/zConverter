@@ -1,7 +1,7 @@
 import ctypes
 import sys
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRectF, QSize, Qt
+from PySide6.QtCore import QEasingCurve, QPointF, QPropertyAnimation, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen
 from PySide6.QtWidgets import (QButtonGroup, QFrame, QGraphicsOpacityEffect, QHBoxLayout, QMainWindow,
                                QPushButton, QStackedWidget, QVBoxLayout, QWidget)
@@ -15,27 +15,43 @@ from .jobs import JobManager
 from .legal_page import LegalPage
 from .profile_page import ProfilePage
 from .settings_page import SettingsPage
+from ..i18n import t
 from .widgets import Backdrop, hbox, label
 
 
 def paint_logo(p: QPainter, rect: QRectF):
-    """The app mark: a flat crimson tile with a geometric 'z'. Also used for the .ico."""
+    """The app mark: a crimson tile with a drawn 'zC' monogram (lowercase z on the baseline of an
+    open C, one stroke weight). Drawn as geometry so it looks the same everywhere. Also used for the .ico."""
     p.setRenderHint(QPainter.RenderHint.Antialiasing)
     s = rect.width()
+    x0, y0 = rect.left(), rect.top()
     tile = QPainterPath()
     tile.addRoundedRect(rect, s * 0.24, s * 0.24)
     p.fillPath(tile, QColor(theme.ACCENT))
-    z = QPainterPath()
-    x0, y0 = rect.left(), rect.top()
-    z.moveTo(x0 + s * 0.31, y0 + s * 0.32)
-    z.lineTo(x0 + s * 0.69, y0 + s * 0.32)
-    z.lineTo(x0 + s * 0.31, y0 + s * 0.68)
-    z.lineTo(x0 + s * 0.69, y0 + s * 0.68)
-    pen = QPen(QColor("white"), s * 0.095)
+
+    def pt(x, y):
+        return QPointF(x0 + s * x, y0 + s * y)
+
+    stroke = s * 0.09
+    base, x_height, cap = 0.71, 0.46, 0.29
+    mark = QPainterPath()
+    # z
+    mark.moveTo(pt(0.165, x_height))
+    mark.lineTo(pt(0.355, x_height))
+    mark.lineTo(pt(0.165, base))
+    mark.lineTo(pt(0.355, base))
+    # C: an arc open to the right, from cap height down to the baseline
+    r = (base - cap) / 2
+    cx, cy = 0.695, cap + r
+    box = QRectF(x0 + s * (cx - r), y0 + s * (cy - r), s * 2 * r, s * 2 * r)
+    mark.arcMoveTo(box, 48)
+    mark.arcTo(box, 48, 264)
+    pen = QPen(QColor("white"), stroke)
     pen.setCapStyle(Qt.PenCapStyle.RoundCap)
     pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
     p.setPen(pen)
-    p.drawPath(z)
+    p.setBrush(Qt.BrushStyle.NoBrush)
+    p.drawPath(mark)
 
 
 class Logo(QWidget):
@@ -94,10 +110,10 @@ class MainWindow(QMainWindow):
         self.stack = QStackedWidget()
         self.download_page = DownloadPage(settings, self.manager)
         pages = [
-            ("download", "İndir", self.download_page),
-            ("user", "Profil görselleri", ProfilePage(settings)),
-            ("sliders", "Ayarlar", SettingsPage(settings, self.manager)),
-            ("shield", "Yasal", LegalPage()),
+            ("download", t("İndir"), self.download_page),
+            ("user", t("Profil görselleri"), ProfilePage(settings)),
+            ("sliders", t("Ayarlar"), SettingsPage(settings, self.manager)),
+            ("shield", t("Yasal"), LegalPage()),
         ]
         self.group = QButtonGroup(self)
         for i, (ic, text, page) in enumerate(pages):
@@ -117,7 +133,7 @@ class MainWindow(QMainWindow):
         foot = QVBoxLayout()
         foot.setContentsMargins(18, 0, 0, 0)
         foot.setSpacing(2)
-        foot.addWidget(label(f"Sürüm {__version__}", "Caption"))
+        foot.addWidget(label(t("Sürüm {version}", version=__version__), "Caption"))
         foot.addWidget(label(f"MIT · {AUTHOR}", "Caption"))
         s.addLayout(foot)
 

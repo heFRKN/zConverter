@@ -1,15 +1,16 @@
-# Katkı rehberi / Contributing
+# Contributing
 
-Katkıların için teşekkürler. / Thanks for contributing.
+Thanks for contributing.
 
-## Kurallar
+## Rules
 
-- Gönderdiğin her katkı, projenin [MIT Lisansı](LICENSE) altında yayınlanmayı kabul ettiğin anlamına gelir. Katkının sana ait olduğundan ve bu lisansla paylaşma hakkın olduğundan emin ol.
-- **Kabul edilmeyecek değişiklikler:** DRM veya kopya korumasını aşan, ücretli içeriğe izinsiz erişim sağlayan, kullanıcıdan veri toplayan veya telemetri ekleyen kodlar.
-- GPL lisanslı Python kütüphaneleri (ör. `mutagen`) uygulama koduna eklenmez; dağıtılan exe MIT kalmalıdır. Yeni bir bağımlılık eklerken lisansını [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) dosyasına yaz.
-- `core/` arayüzden bağımsız kalmalı; Qt yalnızca `ui/` içinde kullanılır.
+- Contributions are accepted under the project's [MIT License](LICENSE). Make sure the work is yours and you may share it under that license.
+- **Not accepted:** code that circumvents DRM or copy protection, accesses paid content without permission, or collects user data / adds telemetry.
+- No GPL-licensed Python libraries (e.g. `mutagen`) in the app; the distributed exe must stay MIT. Add the license of every new dependency to [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- `core/` stays independent of the UI; Qt is only used in `ui/`.
+- Every user-visible string goes through `t("…")` with an English entry in `zconverter/i18n.py`. `python tools/i18n_keys.py` lists missing ones.
 
-## Geliştirme
+## Development
 
 ```powershell
 python -m venv .venv
@@ -17,10 +18,13 @@ python -m venv .venv
 .venv\Scripts\python run.py
 ```
 
-Hata bildirirken: Windows sürümü, zConverter sürümü, bağlantının platformu (gizli bilgi içeren bağlantıları paylaşma) ve ekranda görünen hata metni.
+When reporting a bug, include your Windows version, the zConverter version, the platform of the link (don't share links with private information) and the error text shown in the app.
 
-## Rules (English)
+---
 
-- Contributions are accepted under the project's MIT License.
-- Not accepted: code that circumvents DRM or copy protection, accesses paid content without permission, or collects user data / adds telemetry.
-- No GPL-licensed Python libraries in the app; document every new dependency's license in THIRD_PARTY_NOTICES.md.
+## Katkı rehberi (Türkçe)
+
+- Katkılar projenin MIT Lisansı altında kabul edilir.
+- Kabul edilmeyenler: DRM veya kopya korumasını aşan, ücretli içeriğe izinsiz erişen, kullanıcıdan veri toplayan veya telemetri ekleyen kodlar.
+- Uygulamaya GPL lisanslı Python kütüphanesi eklenmez; her yeni bağımlılığın lisansı THIRD_PARTY_NOTICES.md'ye yazılır.
+- Arayüzdeki her metin `t("…")` ile yazılır ve `zconverter/i18n.py`'ye İngilizcesi eklenir.

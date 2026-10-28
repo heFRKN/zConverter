@@ -6,6 +6,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+from ..i18n import t
 from .paths import ffmpeg_exe
 
 VIDEO_EXTS = {".mp4", ".mkv", ".webm", ".mov"}
@@ -95,7 +96,7 @@ def trim(path: str, start: float | None, end: float | None) -> None:
                           errors="replace", creationflags=_NO_WINDOW)
     if proc.returncode != 0:
         tmp.unlink(missing_ok=True)
-        raise RuntimeError("Kırpma başarısız: " + (proc.stderr.strip().splitlines() or ["ffmpeg hatası"])[-1])
+        raise RuntimeError(t("Kırpma başarısız: ") + (proc.stderr.strip().splitlines() or ["ffmpeg hatası"])[-1])
     os.replace(tmp, src)
 
 
@@ -130,6 +131,7 @@ class ImageOptions:
     fmt: str = "original"   # original | png | jpg | webp
     quality: int = 92
     crop: str = "none"      # none | square | circle | wide
+    box: tuple[int, int, int, int] | None = None  # free crop (left, top, right, bottom) in source pixels
 
 
 def image_info(data: bytes) -> tuple[int, int, str]:
@@ -156,6 +158,8 @@ def _center_crop(im: Image.Image, ratio: float) -> Image.Image:
 def target_size(src: tuple[int, int], opts: ImageOptions) -> tuple[int, int]:
     """Final pixel size after crop + resize, used for the live size readout."""
     w, h = src
+    if opts.box:
+        w, h = opts.box[2] - opts.box[0], opts.box[3] - opts.box[1]
     if opts.crop in ("square", "circle"):
         w = h = min(w, h)
     elif opts.crop == "wide":
@@ -179,11 +183,15 @@ def process_image(data: bytes, opts: ImageOptions) -> tuple[bytes, str]:
     im = Image.open(io.BytesIO(data))
     im.load()
     src_ext = _ext(im.format)
-    untouched = opts.crop == "none" and target_size(im.size, opts) == im.size
+    full = (0, 0, im.width, im.height)
+    box = opts.box if opts.box and tuple(opts.box) != full else None
+    untouched = opts.crop == "none" and not box and target_size(im.size, opts) == im.size
     if untouched and opts.fmt in ("original", src_ext):
         return data, src_ext  # nothing to do: keep the original bytes, no re-encode loss
     if im.mode not in ("RGB", "RGBA"):
         im = im.convert("RGBA" if "A" in im.getbands() or im.mode == "P" else "RGB")
+    if box:
+        im = im.crop(box)
 
     if opts.crop in ("square", "circle"):
         im = _center_crop(im, 1.0)
@@ -191,6 +199,8 @@ def process_image(data: bytes, opts: ImageOptions) -> tuple[bytes, str]:
         im = _center_crop(im, 16 / 9)
 
     size = target_size(im.size, ImageOptions(opts.width, opts.height, opts.keep_ratio))
+    if opts.width and opts.height and not opts.keep_ratio:
+        im = _center_crop(im, opts.width / opts.height)  # fill the exact size, never stretch
     if size != im.size:
         im = im.resize(size, Image.Resampling.LANCZOS)
 

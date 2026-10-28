@@ -5,6 +5,7 @@ import re
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from ..i18n import t
 from .net import meta
 
 MAX_TRACKS = 200
@@ -40,13 +41,13 @@ def resolve(url: str, sess) -> list[Callable[[], Track | None]]:
         url = sess.get(url, timeout=15, allow_redirects=True).url
     m = _URL.search(url)
     if not m:
-        raise ValueError("Spotify bağlantısı tanınmadı (track / album / playlist olmalı).")
+        raise ValueError(t("Spotify bağlantısı tanınmadı (track / album / playlist olmalı)."))
     kind, sid = m.groups()
     page = sess.get(f"https://open.spotify.com/{kind}/{sid}", timeout=15).text
     if kind == "track":
         track = _track_from_page(page)
         if not track:
-            raise ValueError("Spotify parça bilgisi okunamadı.")
+            raise ValueError(t("Spotify parça bilgisi okunamadı."))
         return [lambda: track]
 
     song_urls = []
@@ -55,5 +56,5 @@ def resolve(url: str, sess) -> list[Callable[[], Track | None]]:
         if m2 and m2.group(1) not in song_urls:
             song_urls.append(m2.group(1))
     if not song_urls:
-        raise ValueError("Listedeki parçalar okunamadı. Liste gizli olabilir.")
+        raise ValueError(t("Listedeki parçalar okunamadı. Liste gizli olabilir."))
     return [lambda u=u: _track_from_page(sess.get(u, timeout=15).text) for u in song_urls[:MAX_TRACKS]]

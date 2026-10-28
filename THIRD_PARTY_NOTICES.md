@@ -1,15 +1,15 @@
-# Üçüncü Taraf Bileşenler / Third-Party Notices
-
-zConverter'ın kendi kaynak kodu MIT Lisansı ile dağıtılır. Derlenmiş sürümler (exe) aşağıdaki bileşenleri içerir; her biri kendi lisansına tabidir.
+# Third-Party Notices
 
 zConverter's own source code is MIT licensed. Binary releases bundle the components below, each under its own license.
 
-| Bileşen | Lisans | Kaynak |
+*Türkçe: zConverter'ın kaynak kodu MIT lisanslıdır; derlenmiş sürümlerdeki bileşenler aşağıdaki kendi lisanslarına tabidir.*
+
+| Component | License | Source |
 |---|---|---|
 | FFmpeg 7.1 (gyan.dev "essentials" build) | GPL-3.0-or-later | [ffmpeg.org](https://ffmpeg.org/download.html) · [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) |
-| Qt 6 / PySide6 / Shiboken6 (Qt WebEngine dahil) | LGPL-3.0 | [code.qt.io](https://code.qt.io/cgit/pyside/pyside-setup.git/) |
-| Chromium (Qt WebEngine içinde) | BSD-3-Clause ve diğer açık kaynak lisansları | [chromium.org](https://www.chromium.org/) · lisans listesi: Qt WebEngine `qtwebengine_resources` / [doc.qt.io](https://doc.qt.io/qt-6/qtwebengine-licensing.html) |
-| curl_cffi (curl-impersonate, libcurl, BoringSSL içerir) | MIT; libcurl: curl License; BoringSSL: OpenSSL/ISC | [github.com/lexiforest/curl_cffi](https://github.com/lexiforest/curl_cffi) |
+| Qt 6 / PySide6 / Shiboken6 (incl. Qt WebEngine) | LGPL-3.0 | [code.qt.io](https://code.qt.io/cgit/pyside/pyside-setup.git/) |
+| Chromium (inside Qt WebEngine) | BSD-3-Clause and other open-source licenses | [chromium.org](https://www.chromium.org/) · license list: Qt WebEngine `qtwebengine_resources` / [doc.qt.io](https://doc.qt.io/qt-6/qtwebengine-licensing.html) |
+| curl_cffi (includes curl-impersonate, libcurl, BoringSSL) | MIT; libcurl: curl License; BoringSSL: OpenSSL/ISC | [github.com/lexiforest/curl_cffi](https://github.com/lexiforest/curl_cffi) |
 | yt-dlp | Unlicense | [github.com/yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp) |
 | yt-dlp-ejs | Unlicense, MIT, ISC | [github.com/yt-dlp/ejs](https://github.com/yt-dlp/ejs) |
 | imageio-ffmpeg | BSD-2-Clause | [github.com/imageio/imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg) |

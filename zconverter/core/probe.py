@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 
 import yt_dlp
 
+from ..i18n import t
 from . import accounts, spotify
 from .net import session
 from .paths import app_dir, ffmpeg_exe
@@ -130,7 +131,7 @@ def probe(url: str, cookies: str = "", playlist: bool = False) -> MediaInfo:
     info = MediaInfo(url, key)
     if raw.get("_type") == "playlist" or raw.get("entries") is not None:
         entries = list(raw.get("entries") or [])
-        info.title = raw.get("title") or "Liste"
+        info.title = raw.get("title") or t("Liste")
         info.uploader = raw.get("uploader") or raw.get("channel") or ""
         info.count = len(entries)
         info.thumbnail = _thumb(raw) or (entries and _thumb(entries[0])) or None
@@ -155,8 +156,8 @@ def _probe_spotify(url: str, cookies: str) -> MediaInfo:
     info = MediaInfo(url, "spotify")
     if len(loaders) > 1:
         info.count = len(loaders)
-        info.title = f"{len(loaders)} parça"
-        info.note = "Her parça YouTube'da eşleştirilip ayrı ayrı indirilecek."
+        info.title = t("{n} parça", n=len(loaders))
+        info.note = t("Her parça YouTube'da eşleştirilip ayrı ayrı indirilecek.")
         return info
     track = loaders[0]()
     with yt_dlp.YoutubeDL(_ydl_opts(cookies, False) | {"extract_flat": False}) as ydl:
@@ -167,7 +168,7 @@ def _probe_spotify(url: str, cookies: str) -> MediaInfo:
     info.uploader = track.album or track.artist
     info.thumbnail = track.cover or _thumb(entry)
     info.duration = entry.get("duration")
-    info.note = f"YouTube eşleşmesi: {entry.get('title', '')}"
+    info.note = t("YouTube eşleşmesi: {title}", title=entry.get("title", ""))
     _fill_streams(info, entry, ydl.cookiejar)
     return info
 
