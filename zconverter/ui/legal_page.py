@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QDialog, QPushButton, QTextBrowser, QVBoxLayout, Q
 
 from ..core.paths import resource
 from . import theme
-from .widgets import Backdrop, GlassCard, Segmented, Toggle, hbox, label
+from .widgets import Backdrop, Card, Segmented, Toggle, hbox, label
 
 DOCS = [("Kullanım koşulları", "TERMS.md"), ("Gizlilik ve KVKK", "PRIVACY.md"),
         ("Lisanslar", "THIRD_PARTY_NOTICES.md")]
@@ -42,7 +42,7 @@ class LegalPage(QWidget):
         self.tabs.changed.connect(self._show)
         root.addWidget(self.tabs)
         root.addSpacing(10)
-        card = GlassCard(padding=22)
+        card = Card(padding=22)
         self.view = doc_view()
         card.layout().addWidget(self.view)
         root.addWidget(card, 1)
@@ -70,7 +70,7 @@ class ConsentDialog(QDialog):
         root.addWidget(label("zConverter yalnızca hakkın olan ya da kişisel kullanımına izin verilen içerikler "
                              "içindir. Lütfen koşulları oku.", "Sub", wrap=True))
         root.addSpacing(10)
-        card = GlassCard(padding=18)
+        card = Card(padding=18)
         view = doc_view()
         view.setMarkdown(read_doc("TERMS.md"))
         card.layout().addWidget(view)

@@ -15,36 +15,40 @@ from zconverter.main import build_app  # noqa: E402
 from zconverter.ui.jobs import Job  # noqa: E402
 from zconverter.ui.window import MainWindow  # noqa: E402
 
+DEMO_URL = "https://www.youtube.com/watch?v=jNQXAC9IVRw"
+
 
 def main():
     out = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / "docs")
     out.mkdir(parents=True, exist_ok=True)
     app = build_app(sys.argv)
     win = MainWindow(Settings())
+    win.resize(1200, 900)
     win.show()
 
     page = win.download_page
-    page.url.setText("https://www.youtube.com/watch?v=jNQXAC9IVRw")
-    page.trim.setChecked(True)
-    page.start_at.setText("0:05")
-    page.end_at.setText("0:15")
     demo = [
-        ("https://open.spotify.com/track/x", "audio", "mp3", "Rick Astley - Never Gonna Give You Up", 1.0, "done"),
-        ("https://www.tiktok.com/@x/video/1", "video", "mp4", "Sunset timelapse", 0.62,
-         "18.4 MB / 29.6 MB  ·  6.2 MB/sn  ·  0:02 kaldı"),
-        ("https://soundcloud.com/x/y", "audio", "mp3", "Late night mix", None, "Sese dönüştürülüyor"),
+        ("https://open.spotify.com/track/x", "audio", "mp3", "Rick Astley - Never Gonna Give You Up", "done"),
+        ("https://x.com/NASA/status/1", "video", "mp4", "NASA - Liftoff", 0.62),
     ]
-    for url, mode, fmt, title, value, status in demo:
+    for url, mode, fmt, title, state in demo:
         job = Job(Request(url, mode=mode, fmt=fmt))
         page._add_row(job)
         job.title.emit(title)
-        if status == "done":
+        if state == "done":
             job.state = "done"
             job.done.emit([f"C:/Downloads/{title}.{fmt}"])
-        elif value is None:
-            job.status.emit(status)
         else:
-            job.progress.emit(value, status)
+            job.progress.emit(state, "18.4 MB / 29.6 MB  ·  6.2 MB/sn  ·  0:02 kaldı")
+    page.set_url(DEMO_URL)
+
+    def select_range():
+        ed = page.editor
+        ed.timeline.set_range(4.0, 12.5)
+        ed._sync()
+        ed._load_cut("start")
+        ed._load_cut("end")
+        QTimer.singleShot(6000, shot_download)
 
     def shot_download():
         win.grab().save(str(out / "download.png"))
@@ -71,7 +75,7 @@ def main():
         win._go(3)
         QTimer.singleShot(600, lambda: (win.grab().save(str(out / "legal.png")), app.quit()))
 
-    QTimer.singleShot(1200, shot_download)
+    QTimer.singleShot(7000, select_range)
     app.exec()
 
 

@@ -1,6 +1,6 @@
 # Kullanım Koşulları ve Yasal Uyarı
 
-Son güncelleme: 28 Ekim 2026 · Koşul sürümü 1
+Son güncelleme: 28 Ekim 2026 · Koşul sürümü 2
 
 zConverter ("Uygulama"), heFRKN tarafından geliştirilen, MIT Lisansı ile dağıtılan ücretsiz ve açık kaynaklı bir masaüstü yazılımıdır. Uygulamayı kurarak veya kullanarak bu koşulları kabul etmiş olursun. Kabul etmiyorsan Uygulamayı kullanma.
 
@@ -31,9 +31,9 @@ Uygulamayı şu amaçlarla kullanamazsın:
 
 Spotify içerikleri DRM ile korunur ve Uygulama Spotify'dan **ses indirmez**. Uygulama yalnızca herkese açık parça bilgilerini (parça adı, sanatçı, albüm, kapak) okur ve aynı parçayı YouTube'da arar. Bulunan içerik de bu koşullara tabidir. Eşleşme her zaman doğru olmayabilir.
 
-## 5. Tarayıcı oturumu (çerezler)
+## 5. Hesap girişi (oturumlar)
 
-İsteğe bağlı "Tarayıcı oturumu" özelliği, giriş yaptığın tarayıcının çerezlerini yalnızca bu bilgisayarda okur ve yalnızca ilgili platformun kendisine gönderir. **Yalnızca kendi hesabını kullan.** Bazı platformlar otomatik erişim nedeniyle hesapları kısıtlayabilir; bu risk sana aittir.
+Giriş isteyen içerikler için Uygulama içinde, platformun **kendi giriş sayfası** açılır. Şifren Uygulamaya geçmez; yalnızca girişten sonra oluşan oturum çerezleri, Windows'un kullanıcıya özel şifrelemesiyle (DPAPI) bu bilgisayarda saklanır ve yalnızca ait oldukları platforma gönderilir. Varsayılan tarayıcın Firefox ise, istersen Firefox'taki açık oturumun kullanılabilir. Uygulama başka tarayıcıların koruma altındaki oturumlarını okumaz. **Yalnızca kendi hesabını kullan.** Bazı platformlar otomatik erişim nedeniyle hesapları kısıtlayabilir; bu risk sana aittir. Oturumları istediğin an Ayarlar → Hesaplar'dan silebilirsin.
 
 ## 6. Ticari markalar
 
@@ -64,7 +64,7 @@ zConverter is free, open-source software by heFRKN, released under the MIT Licen
 3. **Personal data.** Profile pictures and banners can be personal data. Using them to impersonate, harass, dox or republish people without consent may be unlawful (e.g. Turkish KVKK No. 6698, GDPR, criminal law).
 4. **Prohibited uses.** Saving paid or restricted content without permission; bulk scraping, spam, harassment, impersonation or fraud; using other people's accounts or cookies; any unlawful activity.
 5. **Spotify.** No audio is downloaded from Spotify. Only public track metadata is read and the song is searched on YouTube.
-6. **Browser session.** The optional cookie feature reads your browser's cookies locally and sends them only to the matching platform. Use only your own account.
+6. **Sign-in.** For content that requires an account you sign in on the platform's own login page inside the app. Your password never reaches the app; only the resulting session cookies are stored on this computer, encrypted with Windows DPAPI, and sent only to the platform they belong to. If your default browser is Firefox you may use its open session instead. Use only your own account; you can remove sessions at any time in Settings → Accounts.
 7. **Trademarks.** All platform names and logos belong to their owners. zConverter is not affiliated with, endorsed or sponsored by any of them, and contains none of their logos.
 8. **No warranty.** Provided "AS IS" without warranty of any kind. To the maximum extent permitted by law, the author is not liable for any damages, claims or sanctions arising from the use of the software or of downloaded content.
 9. **Changes and law.** These terms may change; the app asks for consent again after material changes. Governed by the laws of the Republic of Türkiye, without prejudice to mandatory local law.

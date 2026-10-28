@@ -38,6 +38,15 @@ def format_time(seconds: float) -> str:
     return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
 
 
+def format_precise(seconds: float) -> str:
+    """m:ss.d (h:mm:ss.d past an hour)."""
+    tenths = int(round(max(0.0, seconds) * 10))
+    s, d = divmod(tenths, 10)
+    h, rem = divmod(s, 3600)
+    m, s = divmod(rem, 60)
+    return f"{h}:{m:02d}:{s:02d}.{d}" if h else f"{m}:{s:02d}.{d}"
+
+
 def format_size(n: float | None) -> str:
     if not n:
         return "?"
@@ -87,6 +96,27 @@ def trim(path: str, start: float | None, end: float | None) -> None:
     if proc.returncode != 0:
         tmp.unlink(missing_ok=True)
         raise RuntimeError("Kırpma başarısız: " + (proc.stderr.strip().splitlines() or ["ffmpeg hatası"])[-1])
+    os.replace(tmp, src)
+
+
+def embed_cover(path: str, image: str) -> None:
+    """Attach a cover picture to an MP3 / M4A file in place."""
+    src = Path(path)
+    if src.suffix.lower() not in (".mp3", ".m4a"):
+        return
+    tmp = src.with_name(src.stem + ".zc-cover" + src.suffix)
+    args = [ffmpeg_exe(), "-y", "-hide_banner", "-loglevel", "error", "-i", str(src), "-i", image,
+            "-map", "0:a", "-map", "1:0", "-c:a", "copy", "-c:v", "mjpeg", "-map_metadata", "0",
+            "-disposition:v:0", "attached_pic"]
+    if src.suffix.lower() == ".mp3":
+        args += ["-id3v2_version", "3", "-metadata:s:v", "title=Album cover",
+                 "-metadata:s:v", "comment=Cover (front)"]
+    args.append(str(tmp))
+    proc = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                          creationflags=_NO_WINDOW)
+    if proc.returncode != 0:
+        tmp.unlink(missing_ok=True)
+        return  # a missing cover is not worth failing the download
     os.replace(tmp, src)
 
 

@@ -8,7 +8,7 @@ import yt_dlp
 from yt_dlp.postprocessor.common import PostProcessor
 from yt_dlp.utils import DownloadCancelled, DownloadError
 
-from . import media, spotify
+from . import accounts, media, spotify
 from .net import meta, session
 from .paths import app_dir, ffmpeg_exe
 from .platforms import detect, normalize_url
@@ -52,20 +52,43 @@ class Request:
         return self.start is not None or self.end is not None
 
 
-def humanize(err: BaseException) -> str:
+_LOGIN_WORDS = ("login", "log in", "sign in", "authentication", "cookies", "private", "confirm your age",
+                "cannot parse data", "rate-limit", "not available without")
+
+
+def _clean(err: BaseException | str) -> str:
     msg = re.sub(r"\x1b\[[0-9;]*m", "", str(err)).strip()
     msg = re.sub(r"^ERROR:\s*", "", msg)
-    msg = re.sub(r"^\[[\w:]+\]\s*[\w-]+:\s*", "", msg)
+    msg = re.sub(r"^\[([\w:]+)\]\s*[\w-]+:\s*", "", msg)
+    return msg
+
+
+def needs_login(err: BaseException | str) -> bool:
+    low = _clean(err).lower()
+    return any(k in low for k in _LOGIN_WORDS)
+
+
+def humanize(err: BaseException | str) -> str:
+    raw = str(err)
+    msg = _clean(err)
     low = msg.lower()
+    if "[tiktok]" in raw.lower() or "tiktok" in low and "unexpected response" in low:
+        return "TikTok, tarayıcı dışından gelen istekleri engelliyor; bu sürümde TikTok indirmesi çalışmıyor."
     if "unsupported url" in low:
         return "Bu bağlantı desteklenmiyor."
     if "drm" in low:
         return "Bu içerik DRM korumalı, indirilemez."
-    if any(k in low for k in ("login", "log in", "sign in", "cookies", "private", "confirm your age")):
-        return msg[:240] + "\nGiriş gerekebilir: Ayarlar → Tarayıcı oturumu."
-    if "404" in low:
-        return "İçerik bulunamadı (404). Silinmiş ya da gizli olabilir."
-    return msg[:300] or "Bilinmeyen hata."
+    if "[reddit]" in raw.lower() and needs_login(err):
+        return "Reddit videoları için Reddit hesabıyla giriş gerekiyor."
+    if "[facebook]" in raw.lower() and needs_login(err):
+        return "Facebook bu videoyu giriş yapmadan göstermiyor."
+    if "[instagram]" in raw.lower() and needs_login(err):
+        return "Instagram bu gönderiyi giriş yapmadan göstermiyor."
+    if needs_login(err):
+        return "Bu içerik için giriş gerekiyor."
+    if "404" in low or "does not exist" in low:
+        return "İçerik bulunamadı. Silinmiş ya da gizli olabilir."
+    return msg.split("\n")[0][:220] or "Bilinmeyen hata."
 
 
 class _Log:
@@ -117,6 +140,15 @@ class _Finish(PostProcessor):
             if duration and req.start and req.start >= duration:
                 raise DownloadError(f"Başlangıç ({media.format_time(req.start)}) içeriğin süresini aşıyor.")
             media.trim(path, req.start, req.end)
+        # cover art goes in last so trimming can't drop it; ffmpeg only, no ffprobe needed
+        thumbs = [t["filepath"] for t in info.get("thumbnails") or []
+                  if t.get("filepath") and Path(t["filepath"]).exists()]
+        if path and thumbs:
+            try:
+                media.embed_cover(path, thumbs[-1])
+            finally:
+                for t in thumbs:
+                    Path(t).unlink(missing_ok=True)
         if path:
             self.owner.outputs.append(path)
         return [], info
@@ -211,21 +243,19 @@ class Downloader:
             o["format"] = "ba/b"
             pps.append({"key": "FFmpegExtractAudio", "preferredcodec": r.fmt, "preferredquality": r.quality})
             if r.cover and r.fmt in COVER_FORMATS:
-                o["writethumbnail"] = True
+                o["writethumbnail"] = True  # embedded by _Finish
                 pps.append({"key": "FFmpegThumbnailsConvertor", "format": "jpg", "when": "before_dl"})
-                pps.append({"key": "FFmpegMetadata", "add_metadata": True})
-                pps.append({"key": "EmbedThumbnail"})
-            else:
-                pps.append({"key": "FFmpegMetadata", "add_metadata": True})
+            pps.append({"key": "FFmpegMetadata", "add_metadata": True})
         o["postprocessors"] = pps
         return o
 
     def _download(self, target: str, track: spotify.Track | None = None, outtmpl: str | None = None):
         if outtmpl is None:
-            outtmpl = "%(title).150B"
+            outtmpl = "%(title).90B"
             if self.req.playlist:
                 outtmpl = "%(playlist_title,playlist_id|Liste).80B/" + outtmpl
         with yt_dlp.YoutubeDL(self._options(self._template(outtmpl))) as ydl:
+            accounts.apply(ydl.cookiejar)
             if track:
                 ydl.add_post_processor(_TrackMeta(track), when="pre_process")
             ydl.add_post_processor(_Finish(self), when="after_move")
@@ -262,7 +292,7 @@ class Downloader:
         media_url = meta(page, "og:video:secure_url") or meta(page, "og:video")
         if not media_url:
             raise DownloadError("Threads gönderisinde video bulunamadı. Gönderi gizli olabilir; "
-                                "Ayarlar → Tarayıcı oturumu ile tekrar dene.")
+                                "giriş yapıp tekrar dene.")
         return media_url
 
     # ------------------------------------------------------------ hooks

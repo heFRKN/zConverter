@@ -22,7 +22,7 @@
 
 - **Video ve ses indirme:** YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads, Facebook
 - **Biçimler:** MP4 / MKV video (360p'den 4K'ya), MP3 / M4A / OPUS / FLAC / WAV ses (128 - 320 kbps)
-- **İndirirken kırpma:** başlangıç ve bitiş zamanını yaz, sadece o bölüm kaydedilsin (kare hassasiyetinde)
+- **Görsel kırpma:** bağlantıyı yapıştırınca önizleme gelir; başlangıç ve bitiş karelerini görerek, zaman şeridindeki tutamaklarla (seste dalga formuyla) aralığı seç, kesim noktalarını dinle. Kesim kare hassasiyetinde
 - **Kapak ve etiketler:** MP3 / M4A dosyalarına başlık, sanatçı, albüm ve kapak görseli otomatik eklenir
 - **Oynatma listeleri:** tüm listeyi tek seferde indir
 - **Profil görselleri:** YouTube, Instagram, X, Threads, Reddit ve Facebook hesaplarının profil fotoğrafı ve kapak (banner) görseli, en yüksek çözünürlükte
@@ -40,18 +40,19 @@
 | Spotify | – | ✓ ¹ | – | – |
 | SoundCloud | – | ✓ | – | – |
 | Instagram | ✓ | ✓ | ✓ ² | platformda yok |
-| TikTok | ✓ | ✓ | – | – |
+| TikTok | ✗ ⁵ | ✗ ⁵ | – | – |
 | X (Twitter) | ✓ | ✓ | ✓ | ✓ |
 | Reddit | ✓ | ✓ | ✓ ³ | ✓ ³ |
 | Threads | ✓ ⁴ | ✓ ⁴ | ✓ | platformda yok |
 | Facebook | ✓ | ✓ | ✓ | ✓ ³ |
 
 1. Spotify DRM korumalıdır; ses Spotify'dan **indirilmez**. Parça bilgisi okunur ve aynı şarkı YouTube'da bulunur. Etiketler ve albüm kapağı Spotify'dakiyle aynı olur.
-2. Oturum açmadan küçük boyut gelir. Tam çözünürlük için Ayarlar → Tarayıcı oturumu.
-3. Platform anonim erişime izin vermiyor; Ayarlar → Tarayıcı oturumu gerekir.
+2. Giriş yapmadan küçük boyut gelir. Tam çözünürlük için Instagram'a giriş yap.
+3. Platform girişsiz erişime izin vermiyor; bir kez giriş yapman gerekir.
 4. Sınırlı destek: herkese açık gönderilerde çalışır.
+5. TikTok tarayıcı dışından gelen istekleri engelliyor; zConverter bot korumalarını atlatmadığı için şu an çalışmıyor.
 
-Gizli, yaş sınırlı ya da giriş isteyen içerikler için **Ayarlar → Tarayıcı oturumu** ile giriş yaptığın tarayıcıyı seçebilirsin. Çerezler bilgisayarından dışarı çıkmaz. Ayrıntılar: [PRIVACY.md](PRIVACY.md).
+Giriş isteyen içeriklerde **Giriş yap** düğmesi çıkar: platformun kendi giriş sayfası uygulamanın içinde açılır, bir kez giriş yaparsın, oturum bilgisayarında Windows şifrelemesiyle saklanır. Şifren uygulamaya geçmez. Hesapları **Ayarlar → Hesaplar**'dan yönetebilirsin. Ayrıntılar: [PRIVACY.md](PRIVACY.md).
 
 ## Kurulum
 
@@ -119,7 +120,7 @@ YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook 
 **zConverter** is a simple Windows app to download video and audio from YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads and Facebook, and to grab profile pictures and banners from YouTube, Instagram, X, Threads, Reddit and Facebook. You can trim audio/video and resize, crop or convert images right before saving.
 
 - MP4 / MKV video up to 4K, MP3 / M4A / OPUS / FLAC / WAV audio with tags and cover art
-- Frame-accurate trimming while downloading
+- Visual trimming: frames at both cut points, filmstrip / waveform timeline, listen to the cuts
 - Profile images at full resolution with resize, square/circle/16:9 crop and PNG/JPG/WEBP export
 - Spotify: no audio is ever downloaded from Spotify (DRM); public track metadata is read and the song is matched on YouTube
 - No accounts, no telemetry, no servers. The app identifies itself honestly and never circumvents DRM or bot protection

@@ -3,17 +3,14 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QComboBox, QFileDialog, QPushButton, QScrollArea, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFileDialog, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from .. import AUTHOR, REPO_URL, __version__
+from ..core import accounts
 from ..core.paths import js_runtime
 from ..core.settings import Settings
 from .jobs import JobManager
-from .widgets import ElidedLabel, GlassCard, Segmented, hbox, label
-
-BROWSERS = [("Kapalı", ""), ("Firefox", "firefox"), ("Edge", "edge"), ("Chrome", "chrome"),
-            ("Brave", "brave"), ("Opera", "opera"), ("Vivaldi", "vivaldi")]
-
+from .widgets import Card, ElidedLabel, Segmented, Toggle, hbox, label
 
 def _pkg_version(name: str) -> str:
     try:
@@ -22,8 +19,8 @@ def _pkg_version(name: str) -> str:
         return "?"
 
 
-def _card(title: str, *rows) -> GlassCard:
-    card = GlassCard(padding=20)
+def _card(title: str, *rows) -> Card:
+    card = Card(padding=20)
     card.layout().setSpacing(10)
     card.layout().addWidget(label(title, "H2"))
     for row in rows:
@@ -65,24 +62,31 @@ class SettingsPage(QWidget):
         root.addWidget(_card("Kayıt yeri", hbox(self.path, change, open_btn, stretch=(self.path,))))
         root.addSpacing(12)
 
-        # browser session
-        self.browser = QComboBox()
-        self.browser.setMinimumWidth(160)
-        for text, key in BROWSERS:
-            self.browser.addItem(text, key)
-        keys = [k for _, k in BROWSERS]
-        self.browser.setCurrentIndex(keys.index(settings.cookies_browser) if settings.cookies_browser in keys else 0)
-        self.browser.currentIndexChanged.connect(self._on_browser)
+        # accounts
+        self.account_rows = {}
+        rows = []
+        for key, (name, *_rest) in accounts.PLATFORMS.items():
+            status = label("", "Caption")
+            btn = QPushButton()
+            btn.setFixedWidth(110)
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn.clicked.connect(lambda _=False, k=key: self._toggle_account(k))
+            n = label(name, "Muted")
+            n.setFixedWidth(120)
+            self.account_rows[key] = (status, btn)
+            rows.append(hbox(n, status, None, btn))
+        self.firefox = Toggle("Firefox'taki açık oturumu kullan", checked=settings.cookies_browser == "firefox")
+        self.firefox.toggled.connect(self._on_firefox)
         root.addWidget(_card(
-            "Tarayıcı oturumu",
-            label("Gizli, yaş sınırlı ya da giriş isteyen içerikler ve Instagram / Reddit / Facebook profilleri "
-                  "için, giriş yaptığın tarayıcının çerezleri kullanılır. Çerezler yalnızca bu bilgisayarda "
-                  "okunur, kaydedilmez ve sadece ilgili platformun kendisine gönderilir. Sadece kendi hesabını "
-                  "kullan.", "Muted", wrap=True),
-            label("Chrome ve Edge yeni sürümlerde çerezleri şifreler; okunamazsa Firefox önerilir. "
-                  "Okuma sırasında tarayıcının kapalı olması gerekebilir.", "Caption", wrap=True),
-            hbox(self.browser, None),
+            "Hesaplar",
+            label("Gizli, yaş sınırlı ya da giriş isteyen içerikler (Reddit videoları gibi) için hesabına giriş yap. "
+                  "Giriş, platformun kendi sayfasında uygulamanın içinde yapılır; şifren uygulamaya geçmez. "
+                  "Oturum bu bilgisayarda Windows şifrelemesiyle saklanır ve sadece o platforma gönderilir. "
+                  "Sadece kendi hesabını kullan.", "Muted", wrap=True),
+            *rows,
+            self.firefox,
         ))
+        self._refresh_accounts()
         root.addSpacing(12)
 
         # parallel
@@ -135,8 +139,26 @@ class SettingsPage(QWidget):
         Path(self.settings.output_dir).mkdir(parents=True, exist_ok=True)
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.settings.output_dir))
 
-    def _on_browser(self, index: int):
-        self.settings.cookies_browser = BROWSERS[index][1]
+    def _refresh_accounts(self):
+        for key, (status, btn) in self.account_rows.items():
+            on = accounts.signed_in(key)
+            status.setText("Bağlı" if on else "Bağlı değil")
+            btn.setText("Çıkış yap" if on else "Giriş yap")
+
+    def _toggle_account(self, key: str):
+        if accounts.signed_in(key):
+            accounts.sign_out(key)
+        else:
+            from .login_dialog import LoginDialog
+            LoginDialog(key, self).exec()
+        self._refresh_accounts()
+
+    def showEvent(self, e):
+        super().showEvent(e)
+        self._refresh_accounts()  # a login from the download page may have happened meanwhile
+
+    def _on_firefox(self, on: bool):
+        self.settings.cookies_browser = "firefox" if on else ""
         self.settings.save()
 
     def _on_parallel(self, index: int):

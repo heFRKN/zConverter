@@ -1,13 +1,19 @@
 from pathlib import Path
 
+# Flat, quiet palette. The accent is used sparingly: primary action, active states, selection.
 ACCENT = "#990033"
-ACCENT_HOVER = "#B0103F"
-ACCENT_PRESS = "#7C0029"
-BG = "#0B0809"
-TEXT = "#F2ECEE"
-TEXT_2 = "#A89DA2"
-TEXT_3 = "#6E6267"
-ERROR = "#FF7A8F"
+ACCENT_HOVER = "#AB0A3E"
+ACCENT_PRESS = "#80002B"
+BG = "#111012"
+SIDEBAR = "#151416"
+SURFACE = "#19181A"
+SURFACE_2 = "#211F22"
+SURFACE_3 = "#2B292C"
+BORDER = "#2A282B"
+TEXT = "#ECE9EA"
+TEXT_2 = "#9C979A"
+TEXT_3 = "#6A6568"
+ERROR = "#E5677D"
 FONT_TEXT = "Segoe UI Variable Text"
 FONT_DISPLAY = "Segoe UI Variable Display"
 
@@ -21,141 +27,126 @@ QWidget {{
     font-family: "{FONT_TEXT}", "Segoe UI";
     font-size: 13px;
 }}
+QMainWindow, QDialog {{ background: {BG}; }}
 QLabel {{ background: transparent; }}
-QLabel#H1 {{
-    font-family: "{FONT_DISPLAY}", "Segoe UI";
-    font-size: 27px;
-    font-weight: 600;
-}}
-QLabel#H2 {{ font-size: 15px; font-weight: 600; }}
-QLabel#Sub {{ color: {TEXT_2}; font-size: 13px; }}
+QLabel#H1 {{ font-family: "{FONT_DISPLAY}", "Segoe UI"; font-size: 24px; font-weight: 600; }}
+QLabel#H2 {{ font-size: 14px; font-weight: 600; }}
+QLabel#Sub {{ color: {TEXT_2}; }}
 QLabel#Section {{ color: {TEXT_3}; font-size: 11px; font-weight: 600; letter-spacing: 1px; }}
 QLabel#Caption {{ color: {TEXT_3}; font-size: 12px; }}
 QLabel#Muted {{ color: {TEXT_2}; }}
+QLabel#Muted:disabled {{ color: {TEXT_3}; }}
 QLabel#Error {{ color: {ERROR}; font-size: 12px; }}
 QLabel#Chip {{
-    background: rgba(153, 0, 51, 0.20);
-    border: 1px solid rgba(204, 40, 90, 0.45);
-    border-radius: 8px;
-    padding: 2px 8px;
-    color: #F3C7D4;
+    background: {SURFACE_2};
+    border: 1px solid {BORDER};
+    border-radius: 6px;
+    padding: 1px 7px;
+    color: {TEXT_2};
     font-size: 11px;
     font-weight: 600;
 }}
+QLabel#Time {{ color: {TEXT}; font-size: 12px; font-weight: 600; }}
+
+QFrame#Sidebar {{ background: {SIDEBAR}; border-right: 1px solid {BORDER}; }}
 
 QLineEdit, QSpinBox {{
-    background: rgba(0, 0, 0, 0.30);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 11px;
-    padding: 0 12px;
-    min-height: 36px;
+    background: {SURFACE_2};
+    border: 1px solid {BORDER};
+    border-radius: 8px;
+    padding: 0 10px;
+    min-height: 34px;
     selection-background-color: {ACCENT};
 }}
-QLineEdit:hover, QSpinBox:hover {{ border-color: rgba(255, 255, 255, 0.15); }}
-QLineEdit:focus, QSpinBox:focus {{ border-color: rgba(204, 40, 90, 0.85); background: rgba(0, 0, 0, 0.38); }}
-QLineEdit:disabled, QSpinBox:disabled {{ color: {TEXT_3}; background: rgba(0, 0, 0, 0.15); }}
-QLineEdit#Hero {{ min-height: 46px; font-size: 14px; padding-left: 16px; border-radius: 13px; }}
+QLineEdit:hover, QSpinBox:hover {{ border-color: #3A373B; }}
+QLineEdit:focus, QSpinBox:focus {{ border-color: {ACCENT}; }}
+QLineEdit:disabled, QSpinBox:disabled {{ color: {TEXT_3}; background: {SURFACE}; }}
+QLineEdit#Hero {{ min-height: 42px; font-size: 14px; padding-left: 14px; }}
 QSpinBox::up-button, QSpinBox::down-button {{ width: 0; border: none; }}
 
 QComboBox {{
-    background: rgba(0, 0, 0, 0.30);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 0 30px 0 12px;
-    min-height: 36px;
+    background: {SURFACE_2};
+    border: 1px solid {BORDER};
+    border-radius: 8px;
+    padding: 0 28px 0 10px;
+    min-height: 34px;
 }}
-QComboBox:hover {{ border-color: rgba(255, 255, 255, 0.15); }}
+QComboBox:hover {{ border-color: #3A373B; }}
 QComboBox:disabled {{ color: {TEXT_3}; }}
-QComboBox::drop-down {{ border: none; width: 28px; }}
+QComboBox::drop-down {{ border: none; width: 26px; }}
 QComboBox::down-arrow {{ image: url("{chevron_url}"); width: 12px; height: 12px; }}
 QComboBox QAbstractItemView {{
-    background: #181315;
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: {SURFACE_2};
+    border: 1px solid {BORDER};
     padding: 4px;
-    selection-background-color: rgba(153, 0, 51, 0.65);
-    selection-color: white;
+    selection-background-color: {SURFACE_3};
+    selection-color: {TEXT};
     outline: none;
 }}
-QComboBox QAbstractItemView::item {{ min-height: 30px; padding: 0 10px; border-radius: 6px; }}
+QComboBox QAbstractItemView::item {{ min-height: 28px; padding: 0 8px; }}
 
 QPushButton {{
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 10px;
+    background: {SURFACE_2};
+    border: 1px solid {BORDER};
+    border-radius: 8px;
     padding: 0 14px;
-    min-height: 36px;
+    min-height: 34px;
 }}
-QPushButton:hover {{ background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.14); }}
-QPushButton:pressed {{ background: rgba(255, 255, 255, 0.04); }}
-QPushButton:disabled {{ color: {TEXT_3}; background: rgba(255, 255, 255, 0.03); }}
+QPushButton:hover {{ background: {SURFACE_3}; }}
+QPushButton:pressed {{ background: {SURFACE}; }}
+QPushButton:disabled {{ color: {TEXT_3}; background: {SURFACE}; }}
 QPushButton#Primary {{
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #A90B40, stop:1 #8A002E);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 12px;
+    background: {ACCENT};
+    border: none;
     color: white;
     font-weight: 600;
-    padding: 0 24px;
-    min-height: 40px;
+    padding: 0 22px;
+    min-height: 38px;
 }}
-QPushButton#Primary:hover {{
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #BB164C, stop:1 #990033);
-}}
+QPushButton#Primary:hover {{ background: {ACCENT_HOVER}; }}
 QPushButton#Primary:pressed {{ background: {ACCENT_PRESS}; }}
-QPushButton#Primary:disabled {{ background: rgba(153, 0, 51, 0.30); color: rgba(255, 255, 255, 0.40); }}
+QPushButton#Primary:disabled {{ background: #4A1A2B; color: rgba(255, 255, 255, 0.45); }}
 QPushButton#Icon {{
     background: transparent;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     min-height: 30px; max-height: 30px;
     min-width: 30px; max-width: 30px;
     padding: 0;
 }}
-QPushButton#Icon:hover {{ background: rgba(255, 255, 255, 0.08); }}
-QPushButton#Link {{
-    background: transparent;
-    border: none;
-    color: {TEXT_2};
-    padding: 0;
-    min-height: 0;
-}}
+QPushButton#Icon:hover {{ background: {SURFACE_3}; }}
+QPushButton#Link {{ background: transparent; border: none; color: {TEXT_2}; padding: 0; min-height: 0; }}
 QPushButton#Link:hover {{ color: {TEXT}; }}
 QPushButton#Nav {{
     text-align: left;
     padding: 0 12px;
-    min-height: 38px;
-    border: 1px solid transparent;
+    min-height: 36px;
+    border: none;
+    border-left: 2px solid transparent;
+    border-radius: 0;
     background: transparent;
     color: {TEXT_2};
-    border-radius: 10px;
 }}
-QPushButton#Nav:hover {{ background: rgba(255, 255, 255, 0.045); color: {TEXT}; }}
-QPushButton#Nav:checked {{
-    background: rgba(255, 255, 255, 0.075);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    color: {TEXT};
-}}
+QPushButton#Nav:hover {{ color: {TEXT}; background: {SURFACE}; }}
+QPushButton#Nav:checked {{ color: {TEXT}; background: {SURFACE_2}; border-left: 2px solid {ACCENT}; }}
+
+QMenu {{ background: {SURFACE_2}; border: 1px solid {BORDER}; padding: 4px; }}
+QMenu::item {{ padding: 6px 18px; }}
+QMenu::item:selected {{ background: {SURFACE_3}; }}
 
 QScrollArea, QScrollArea > QWidget > QWidget {{ background: transparent; border: none; }}
 QScrollBar:vertical {{ background: transparent; width: 10px; margin: 2px; }}
-QScrollBar::handle:vertical {{ background: rgba(255, 255, 255, 0.12); border-radius: 3px; min-height: 30px; margin: 0 2px; }}
-QScrollBar::handle:vertical:hover {{ background: rgba(255, 255, 255, 0.22); }}
+QScrollBar::handle:vertical {{ background: {SURFACE_3}; border-radius: 3px; min-height: 30px; margin: 0 2px; }}
+QScrollBar::handle:vertical:hover {{ background: #3A373B; }}
 QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; width: 0; }}
 QScrollBar::add-page, QScrollBar::sub-page {{ background: none; }}
 
-QSlider::groove:horizontal {{ height: 4px; background: rgba(255, 255, 255, 0.10); border-radius: 2px; }}
+QSlider::groove:horizontal {{ height: 4px; background: {SURFACE_3}; border-radius: 2px; }}
 QSlider::sub-page:horizontal {{ background: {ACCENT}; border-radius: 2px; }}
-QSlider::handle:horizontal {{ background: #F4EEF0; width: 16px; height: 16px; margin: -6px 0; border-radius: 8px; }}
-QSlider::groove:horizontal:disabled {{ background: rgba(255, 255, 255, 0.05); }}
-QSlider::sub-page:horizontal:disabled {{ background: rgba(255, 255, 255, 0.10); }}
+QSlider::handle:horizontal {{ background: {TEXT}; width: 14px; height: 14px; margin: -5px 0; border-radius: 7px; }}
+QSlider::sub-page:horizontal:disabled {{ background: {SURFACE_3}; }}
 QSlider::handle:horizontal:disabled, QSlider::handle:disabled {{ background: {TEXT_3}; }}
-QLabel#Muted:disabled {{ color: {TEXT_3}; }}
 
 QTextBrowser {{ background: transparent; border: none; selection-background-color: {ACCENT}; }}
-QToolTip {{
-    background: #1B1618;
-    color: {TEXT};
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    padding: 6px 8px;
-}}
-QDialog {{ background: {BG}; }}
+QToolTip {{ background: {SURFACE_2}; color: {TEXT}; border: 1px solid {BORDER}; padding: 5px 7px; }}
 """

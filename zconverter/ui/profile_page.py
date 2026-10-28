@@ -13,7 +13,8 @@ from ..core.platforms import PLATFORMS, PROFILE_PLATFORMS, detect
 from ..core.settings import Settings
 from . import icons, theme
 from .jobs import run_async
-from .widgets import GlassCard, ProgressLine, Segmented, Toggle, field, hbox, icon_button, label
+from .login_dialog import sign_in
+from .widgets import Card, ProgressLine, Segmented, Toggle, field, hbox, icon_button, label
 
 _PLACEHOLDER = {
     "youtube": "@kanal ya da kanal bağlantısı",
@@ -72,7 +73,7 @@ class ImagePreview(QWidget):
         p.drawPixmap(target, self.pixmap, QRectF(self.pixmap.rect()))
 
 
-class AssetCard(GlassCard):
+class AssetCard(Card):
     def __init__(self, title: str, preview_height: int):
         super().__init__(padding=16, radius=16)
         self.include = Toggle("Kaydet", checked=True)
@@ -111,7 +112,7 @@ class ProfilePage(QWidget):
         root.addSpacing(18)
 
         # lookup card
-        card = GlassCard(padding=22)
+        card = Card(padding=22)
         root.addWidget(card)
         c = card.layout()
         c.setSpacing(16)
@@ -135,7 +136,14 @@ class ProfilePage(QWidget):
         c.addWidget(self.platform)
         c.addLayout(hbox(self.handle, self.go, stretch=(self.handle,)))
         c.addWidget(self.busy)
+        self.login = QPushButton(" Giriş yap ve tekrar dene")
+        self.login.setIcon(icons.icon("key", theme.TEXT_2))
+        self.login.setIconSize(QSize(15, 15))
+        self.login.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.login.clicked.connect(self._login)
+        self.login.hide()
         c.addWidget(self.status)
+        c.addLayout(hbox(self.login, None))
 
         # results
         self.results = QWidget()
@@ -148,7 +156,7 @@ class ProfilePage(QWidget):
         self.banner_card = AssetCard("Kapak", 220)
         res.addLayout(hbox(self.avatar_card, self.banner_card, spacing=14, stretch=(self.banner_card,)))
 
-        edit = GlassCard(padding=20)
+        edit = Card(padding=20)
         e = edit.layout()
         self.target = Segmented(["Profil fotoğrafı", "Kapak"], height=32)
         self.target.changed.connect(lambda i: self._select("avatar" if i == 0 else "banner"))
@@ -182,12 +190,13 @@ class ProfilePage(QWidget):
         self.quality_value.setFixedWidth(26)
         q_row = QWidget()
         q_row.setLayout(hbox(self.quality, self.quality_value, spacing=10))
+        self.quality_field = field("Kalite", q_row)
         self.crop = Segmented([t for t, _ in _CROPS["avatar"]], height=36)
         self.crop.changed.connect(self._on_crop)
 
         e.addLayout(hbox(label("Düzenle", "H2"), None, self.target))
         e.addLayout(hbox(field("Boyut", size_row), field("Kırpma", self.crop), field("Biçim", self.fmt),
-                         field("Kalite", q_row), None, spacing=22))
+                         self.quality_field, None, spacing=22))
         res.addWidget(edit)
 
         self.save_btn = QPushButton("Kaydet")
@@ -237,12 +246,18 @@ class ProfilePage(QWidget):
     def _fetch_done(self):
         self.go.setEnabled(True)
         self.busy.hide()
+        self.login.hide()
+
+    def _login(self):
+        if sign_in(self, self.platform_key, self.settings):
+            self.fetch()
 
     def _fetch_failed(self, msg):
         self._fetch_done()
         self.status.setObjectName("Error")
         self.status.setText(msg)
         self._restyle(self.status)
+        self.login.setVisible(profiles.LOGIN_HINT in msg)
 
     def _fetched(self, prof: profiles.Profile):
         self._fetch_done()
@@ -310,8 +325,7 @@ class ProfilePage(QWidget):
         src_ext = image_info(self._asset(self.current).data)[2]
         fmt = src_ext if o.fmt == "original" else o.fmt
         lossy = fmt in ("jpg", "webp") and o.crop != "circle"
-        self.quality.setEnabled(lossy)
-        self.quality_value.setEnabled(lossy)
+        self.quality_field.setVisible(lossy)
 
     def _changed(self):
         self._generation[self.current] += 1

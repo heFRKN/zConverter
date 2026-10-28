@@ -21,6 +21,9 @@ _PATHS = {
     "lock": '<rect x="5.5" y="10.5" width="13" height="9.5" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
     "unlock": '<rect x="5.5" y="10.5" width="13" height="9.5" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 6.8-1.2"/>',
     "chevron": '<path d="M7 10l5 5 5-5"/>',
+    "play": '<path d="M7 5.5v13l11-6.5z"/>',
+    "stop": '<rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/>',
+    "key": '<circle cx="8" cy="15" r="3.5"/><path d="M10.5 12.5L19 4M16 7l2.5 2.5M14 9l2 2"/>',
     "search": '<circle cx="11" cy="11" r="6"/><path d="M19.5 19.5l-4-4"/>',
     "image": '<rect x="3.5" y="5" width="17" height="14" rx="2.2"/><circle cx="9" cy="10" r="1.6"/>'
              '<path d="M20.5 15.5l-5-4.5-8 8"/>',

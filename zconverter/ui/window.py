@@ -2,8 +2,8 @@ import ctypes
 import sys
 
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRectF, QSize, Qt
-from PySide6.QtGui import QColor, QLinearGradient, QPainter, QPainterPath, QPen
-from PySide6.QtWidgets import (QButtonGroup, QGraphicsOpacityEffect, QHBoxLayout, QMainWindow,
+from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen
+from PySide6.QtWidgets import (QButtonGroup, QFrame, QGraphicsOpacityEffect, QHBoxLayout, QMainWindow,
                                QPushButton, QStackedWidget, QVBoxLayout, QWidget)
 
 from .. import AUTHOR, __version__
@@ -15,25 +15,16 @@ from .jobs import JobManager
 from .legal_page import LegalPage
 from .profile_page import ProfilePage
 from .settings_page import SettingsPage
-from .widgets import Backdrop, GlassCard, hbox, label
+from .widgets import Backdrop, hbox, label
 
 
 def paint_logo(p: QPainter, rect: QRectF):
-    """The app mark: a crimson glass tile with a geometric 'z'. Also used for the .ico."""
+    """The app mark: a flat crimson tile with a geometric 'z'. Also used for the .ico."""
     p.setRenderHint(QPainter.RenderHint.Antialiasing)
     s = rect.width()
     tile = QPainterPath()
-    tile.addRoundedRect(rect, s * 0.26, s * 0.26)
-    g = QLinearGradient(0, rect.top(), 0, rect.bottom())
-    g.setColorAt(0, QColor("#B5134A"))
-    g.setColorAt(1, QColor("#73002A"))
-    p.fillPath(tile, g)
-    sheen = QLinearGradient(0, rect.top(), 0, rect.top() + s * 0.55)
-    sheen.setColorAt(0, QColor(255, 255, 255, 70))
-    sheen.setColorAt(1, QColor(255, 255, 255, 0))
-    p.fillPath(tile, sheen)
-    p.setPen(QPen(QColor(255, 255, 255, 60), max(1.0, s / 40)))
-    p.drawPath(tile)
+    tile.addRoundedRect(rect, s * 0.24, s * 0.24)
+    p.fillPath(tile, QColor(theme.ACCENT))
     z = QPainterPath()
     x0, y0 = rect.left(), rect.top()
     z.moveTo(x0 + s * 0.31, y0 + s * 0.32)
@@ -64,7 +55,7 @@ def _dark_title_bar(hwnd: int):
         dwm = ctypes.windll.dwmapi
         on = ctypes.c_int(1)
         dwm.DwmSetWindowAttribute(hwnd, 20, ctypes.byref(on), ctypes.sizeof(on))  # immersive dark mode
-        bg = QColor("#0E0A0C")
+        bg = QColor(theme.BG)
         colorref = ctypes.c_int(bg.red() | bg.green() << 8 | bg.blue() << 16)
         dwm.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(colorref), ctypes.sizeof(colorref))  # caption
         dwm.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(colorref), ctypes.sizeof(colorref))  # border
@@ -85,18 +76,20 @@ class MainWindow(QMainWindow):
         bg = Backdrop()
         self.setCentralWidget(bg)
         lay = QHBoxLayout(bg)
-        lay.setContentsMargins(14, 14, 0, 14)
+        lay.setContentsMargins(0, 0, 0, 0)
         lay.setSpacing(0)
 
         # sidebar
-        side = GlassCard(radius=20, padding=14, strength=0.85)
-        side.setFixedWidth(224)
-        s = side.layout()
-        s.setSpacing(4)
+        side = QFrame()
+        side.setObjectName("Sidebar")
+        side.setFixedWidth(210)
+        s = QVBoxLayout(side)
+        s.setContentsMargins(0, 18, 0, 16)
+        s.setSpacing(2)
         name = label("zConverter", "H2")
-        name.setStyleSheet("font-size: 16px;")
-        s.addLayout(hbox(Logo(30), name, None, spacing=10, margins=(6, 6, 0, 0)))
-        s.addSpacing(26)
+        name.setStyleSheet("font-size: 15px;")
+        s.addLayout(hbox(Logo(26), name, None, spacing=10, margins=(18, 0, 0, 0)))
+        s.addSpacing(24)
 
         self.stack = QStackedWidget()
         self.download_page = DownloadPage(settings, self.manager)
@@ -113,7 +106,7 @@ class MainWindow(QMainWindow):
             b.setObjectName("Nav")
             b.setCheckable(True)
             b.setIcon(icons.icon(ic, theme.TEXT_2, active=theme.TEXT))
-            b.setIconSize(QSize(18, 18))
+            b.setIconSize(QSize(17, 17))
             b.setCursor(Qt.CursorShape.PointingHandCursor)
             self.group.addButton(b, i)
             s.addWidget(b)
@@ -122,7 +115,7 @@ class MainWindow(QMainWindow):
 
         s.addStretch(1)
         foot = QVBoxLayout()
-        foot.setContentsMargins(8, 0, 0, 2)
+        foot.setContentsMargins(18, 0, 0, 0)
         foot.setSpacing(2)
         foot.addWidget(label(f"Sürüm {__version__}", "Caption"))
         foot.addWidget(label(f"MIT · {AUTHOR}", "Caption"))

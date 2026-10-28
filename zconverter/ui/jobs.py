@@ -3,7 +3,7 @@ from dataclasses import replace
 
 from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal
 
-from ..core.downloader import Cancelled, Downloader, Request, humanize
+from ..core.downloader import Cancelled, Downloader, Request, humanize, needs_login
 
 
 class Job(QObject):
@@ -11,7 +11,7 @@ class Job(QObject):
     progress = Signal(object, str)
     status = Signal(str)
     done = Signal(list)
-    failed = Signal(str)
+    failed = Signal(str, bool)  # message, login would help
     cancelled = Signal()
 
     def __init__(self, req: Request):
@@ -47,7 +47,7 @@ class _JobRunner(QRunnable):
             job.cancelled.emit()
         except Exception as e:
             job.state = "failed"
-            job.failed.emit(humanize(e))
+            job.failed.emit(humanize(e), needs_login(e))
         else:
             job.state = "done"
             job.done.emit(paths)
@@ -91,11 +91,12 @@ class _Task(QRunnable):
             self.signals.ok.emit(result)
 
 
-def run_async(fn: Callable, on_ok: Callable, on_err: Callable, parent: QObject) -> None:
-    """Run fn on the global pool and deliver the result on the GUI thread."""
+def run_async(fn: Callable, on_ok: Callable, on_err: Callable, parent: QObject,
+              pool: QThreadPool | None = None, priority: int = 0) -> None:
+    """Run fn on a thread pool and deliver the result on the GUI thread."""
     signals = _Signals(parent)
     signals.ok.connect(on_ok)
     signals.err.connect(on_err)
     signals.ok.connect(signals.deleteLater)
     signals.err.connect(signals.deleteLater)
-    QThreadPool.globalInstance().start(_Task(fn, signals))
+    (pool or QThreadPool.globalInstance()).start(_Task(fn, signals), priority)

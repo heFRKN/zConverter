@@ -18,7 +18,8 @@ Uygulamayı kullanarak başkalarına ait kişisel verileri (ör. profil fotoğra
 
 | Veri | Konum | Amaç |
 |---|---|---|
-| Ayarlar: kayıt klasörü, tarayıcı oturumu seçimi (yalnızca tarayıcının adı), eşzamanlı indirme sayısı, kabul edilen koşul sürümü | `%APPDATA%\zConverter\settings.json` | Tercihlerini hatırlamak |
+| Ayarlar: kayıt klasörü, Firefox oturumu tercihi, eşzamanlı indirme sayısı, kabul edilen koşul sürümü | `%APPDATA%\zConverter\settings.json` | Tercihlerini hatırlamak |
+| Hesap oturumları (yalnızca giriş yaptığın platformlar için oturum çerezleri, DPAPI ile şifreli) | `%APPDATA%\zConverter\sessions` | Giriş isteyen içerikleri indirebilmek |
 | yt-dlp önbelleği (kişisel veri içermez, platform çözümleme verileri) | `%APPDATA%\zConverter\cache` | Daha hızlı indirme |
 | İndirdiğin dosyalar | Seçtiğin klasör | Senin isteğin |
 
@@ -34,13 +35,16 @@ Uygulama yalnızca senin başlattığın işlemler için ağ bağlantısı kurar
 
 Bu hizmetler IP adresin gibi verileri kendi gizlilik politikalarına göre işler; geliştiricinin bu işleme üzerinde kontrolü yoktur. Uygulama kendini `zConverter/<sürüm>` kullanıcı aracısıyla tanıtır.
 
-## 4. Tarayıcı çerezleri
+## 4. Hesap oturumları
 
-"Tarayıcı oturumu" varsayılan olarak **kapalıdır**. Açarsan:
+Giriş varsayılan olarak **yoktur**; yalnızca sen bir platforma giriş yaparsan oluşur.
 
-- Çerezler yalnızca istek anında bellekte okunur, **diske yazılmaz**,
-- Geliştiriciye veya üçüncü bir tarafa **gönderilmez**,
-- Yalnızca ait oldukları platforma, tarayıcının da göndereceği şekilde iletilir.
+- Giriş, Uygulama içinde açılan platformun **kendi sayfasında** yapılır; şifren Uygulamaya geçmez ve saklanmaz.
+- Girişten sonra oluşan oturum çerezleri, Windows'un kullanıcıya özel şifrelemesiyle (DPAPI) yalnızca bu bilgisayarda saklanır; başka bir Windows kullanıcısı veya başka bir bilgisayar bunları okuyamaz.
+- Oturumlar geliştiriciye veya üçüncü bir tarafa **gönderilmez**; yalnızca ait oldukları platforma, tarayıcının da göndereceği şekilde iletilir.
+- Varsayılan tarayıcın Firefox ise ve sen açarsan, Firefox'taki açık oturum istek anında bellekte okunur ve diske yazılmaz.
+- Uygulama, Chrome / Edge / Brave gibi tarayıcıların koruma altındaki oturumlarını okumaz.
+- Ayarlar → Hesaplar'dan "Çıkış yap" ile oturumu istediğin an silebilirsin.
 
 ## 5. Hakların
 
@@ -59,7 +63,7 @@ Bu metin güncellenebilir; güncel sürüm her zaman depoda ve Uygulamanın "Yas
 # Privacy Policy (English)
 
 - **No accounts, no servers, no analytics or telemetry, no ads.** The author never receives, collects or stores any personal data.
-- **Stored locally:** settings (`%APPDATA%\zConverter\settings.json`), a yt-dlp cache with no personal data (`%APPDATA%\zConverter\cache`) and the files you download. No history or logs are kept.
+- **Stored locally:** settings (`%APPDATA%\zConverter\settings.json`), sessions of platforms you signed in to (`%APPDATA%\zConverter\sessions`, encrypted with Windows DPAPI), a yt-dlp cache with no personal data (`%APPDATA%\zConverter\cache`) and the files you download. No history or logs are kept.
 - **Network:** connections are made only when you start an action, directly from your device to the platform you chose, YouTube search (for Spotify matching) and the open-source FxTwitter API (for X profile images; only the username is sent). Those services process data such as your IP address under their own policies.
-- **Cookies:** the optional browser session feature is off by default. When enabled, cookies are read in memory only, never written to disk, never sent to the author or third parties, and only sent to the platform they belong to.
+- **Sign-in:** off until you sign in. You log in on the platform's own page inside the app; your password never reaches the app. Only the resulting session cookies are kept, encrypted with DPAPI, never sent to the author or third parties, only to the platform they belong to. If your default browser is Firefox you can opt to use its open session (read in memory only). Sessions of Chrome / Edge / Brave are never read. Remove sessions any time in Settings → Accounts.
 - **Controller:** the app runs entirely on your device, so the author is not a data controller or processor under KVKK or GDPR. Purely personal or household activity is outside the scope of KVKK (Art. 28/1-a) and GDPR (Art. 2(2)(c)).

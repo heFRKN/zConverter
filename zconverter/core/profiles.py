@@ -7,11 +7,12 @@ from urllib.parse import parse_qs, urlparse
 
 import requests
 
+from . import accounts
 from .net import NetError, json_string, meta, session
 from .paths import app_dir
 from .platforms import PLATFORMS, detect, normalize_url
 
-LOGIN_HINT = "Ayarlar → Tarayıcı oturumu'ndan bu platforma giriş yaptığın tarayıcıyı seçip tekrar dene."
+LOGIN_HINT = "Giriş yapıp tekrar dene."
 
 
 class ProfileError(Exception):
@@ -86,6 +87,7 @@ def _youtube(target: str, cookies: str) -> Profile:
         opts["cookiesfrombrowser"] = (cookies,)
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
+            accounts.apply(ydl.cookiejar)
             info = ydl.extract_info(url, download=False)
     except Exception as e:
         raise ProfileError("YouTube kanalı bulunamadı.") from e

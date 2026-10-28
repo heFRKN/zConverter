@@ -9,6 +9,7 @@ import re
 import requests
 
 from .. import REPO_URL, __version__
+from . import accounts
 
 USER_AGENT = f"zConverter/{__version__} (+{REPO_URL})"
 
@@ -27,6 +28,7 @@ def session(cookies_browser: str = "") -> requests.Session:
             s.cookies = extract_cookies_from_browser(cookies_browser)
         except Exception as e:  # browser locked, unsupported encryption, etc.
             raise NetError(f"{cookies_browser} oturumu okunamadı: {e}") from e
+    accounts.apply(s.cookies)
     return s
 
 

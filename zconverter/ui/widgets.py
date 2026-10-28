@@ -1,73 +1,25 @@
-import random
-
-from PySide6.QtCore import (QEasingCurve, QPointF, QRectF, QSize, Qt, QTimer, QVariantAnimation,
-                            Signal)
-from PySide6.QtGui import (QBrush, QColor, QFont, QFontMetrics, QImage, QLinearGradient, QPainter,
-                           QPainterPath, QPen, QPixmap, QRadialGradient)
-from PySide6.QtWidgets import (QAbstractButton, QFrame, QHBoxLayout, QLabel, QPushButton,
-                               QSizePolicy, QVBoxLayout, QWidget)
+from PySide6.QtCore import QEasingCurve, QRectF, QSize, Qt, QTimer, QVariantAnimation, Signal
+from PySide6.QtGui import QColor, QFont, QFontMetrics, QPainter, QPainterPath, QPen
+from PySide6.QtWidgets import (QAbstractButton, QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy,
+                               QVBoxLayout, QWidget)
 
 from . import icons, theme
 
-_ACCENT = QColor(theme.ACCENT)
-
-
-def _rgba(r, g, b, a):
-    return QColor(r, g, b, a)
-
 
 class Backdrop(QWidget):
-    """Window background: deep near-black with soft crimson light and a fine grain."""
-
-    _grain: QPixmap | None = None
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, False)
-
-    @classmethod
-    def grain(cls) -> QPixmap:
-        if cls._grain is None:
-            img = QImage(160, 160, QImage.Format.Format_ARGB32)
-            rnd = random.Random(7)
-            for y in range(160):
-                for x in range(160):
-                    v = rnd.randint(0, 255)
-                    img.setPixelColor(x, y, QColor(v, v, v, 7))
-            cls._grain = QPixmap.fromImage(img)
-        return cls._grain
+    """Plain window background."""
 
     def paintEvent(self, _):
-        p = QPainter(self)
-        r = self.rect()
-        base = QLinearGradient(0, 0, 0, r.height())
-        base.setColorAt(0, QColor("#0E0A0C"))
-        base.setColorAt(1, QColor("#080607"))
-        p.fillRect(r, base)
-
-        def glow(cx, cy, radius, alpha):
-            g = QRadialGradient(QPointF(cx, cy), radius)
-            g.setColorAt(0, QColor(153, 0, 51, alpha))
-            g.setColorAt(0.45, QColor(153, 0, 51, alpha // 3))
-            g.setColorAt(1, QColor(153, 0, 51, 0))
-            p.fillRect(r, g)
-
-        w, h = r.width(), r.height()
-        glow(w * 0.18, -h * 0.05, max(w, h) * 0.55, 70)
-        glow(w * 1.02, h * 0.95, max(w, h) * 0.50, 42)
-        glow(w * 0.75, h * 0.10, max(w, h) * 0.25, 14)
-        p.drawTiledPixmap(r, self.grain())
+        QPainter(self).fillRect(self.rect(), QColor(theme.BG))
 
 
-class GlassCard(QFrame):
-    """Translucent panel with a light top edge, like frosted glass catching light."""
+class Card(QFrame):
+    """Flat surface with a hairline border."""
 
-    def __init__(self, parent=None, radius: float = 18, padding: int = 20, strength: float = 1.0):
+    def __init__(self, parent=None, radius: float = 12, padding: int = 20):
         super().__init__(parent)
         self.radius = radius
-        self.strength = strength
         self.highlight = False
-        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, False)
         lay = QVBoxLayout(self)
         lay.setContentsMargins(padding, padding, padding, padding)
         lay.setSpacing(14)
@@ -80,32 +32,17 @@ class GlassCard(QFrame):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         rect = QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
-        path = QPainterPath()
-        path.addRoundedRect(rect, self.radius, self.radius)
-
-        fill = QLinearGradient(0, 0, 0, rect.height())
-        fill.setColorAt(0, _rgba(255, 255, 255, int(17 * self.strength)))
-        fill.setColorAt(1, _rgba(255, 255, 255, int(8 * self.strength)))
-        p.fillPath(path, fill)
-
-        edge = QLinearGradient(0, 0, 0, rect.height())
-        if self.highlight:
-            edge.setColorAt(0, _rgba(230, 70, 120, 200))
-            edge.setColorAt(1, _rgba(153, 0, 51, 140))
-        else:
-            edge.setColorAt(0, _rgba(255, 255, 255, 46))
-            edge.setColorAt(0.35, _rgba(255, 255, 255, 16))
-            edge.setColorAt(1, _rgba(255, 255, 255, 10))
-        p.setPen(QPen(QBrush(edge), 1))
-        p.drawPath(path)
+        p.setPen(QPen(QColor(theme.ACCENT if self.highlight else theme.BORDER), 1))
+        p.setBrush(QColor(theme.SURFACE))
+        p.drawRoundedRect(rect, self.radius, self.radius)
 
 
 class Segmented(QWidget):
-    """Pill segmented control with a sliding glass thumb."""
+    """Segmented control with a sliding thumb."""
 
     changed = Signal(int)
 
-    def __init__(self, items: list[str], parent=None, height: int = 36):
+    def __init__(self, items: list[str], parent=None, height: int = 34):
         super().__init__(parent)
         self._items = list(items)
         self._disabled: set[int] = set()
@@ -113,11 +50,11 @@ class Segmented(QWidget):
         self._pos = 0.0
         self._h = height
         self._hover = -1
-        self._anim = QVariantAnimation(self, duration=260, easingCurve=QEasingCurve.Type.OutCubic)
+        self._anim = QVariantAnimation(self, duration=200, easingCurve=QEasingCurve.Type.OutCubic)
         self._anim.valueChanged.connect(self._on_anim)
         self.setMouseTracking(True)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setFocusPolicy(Qt.FocusPolicy.TabFocus)  # focus ring only for keyboard users
+        self.setFocusPolicy(Qt.FocusPolicy.TabFocus)
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
     def _on_anim(self, v):
@@ -139,9 +76,6 @@ class Segmented(QWidget):
     def index(self) -> int:
         return self._index
 
-    def text(self) -> str:
-        return self._items[self._index]
-
     def set_index(self, index: int, animate: bool = True, emit: bool = True):
         if index == self._index or not 0 <= index < len(self._items):
             return
@@ -157,15 +91,14 @@ class Segmented(QWidget):
         if emit:
             self.changed.emit(index)
 
-    def _seg_w(self) -> float:
-        fm = QFontMetrics(self._font())
-        return max(fm.horizontalAdvance(t) for t in self._items) + 30
-
     def _font(self) -> QFont:
         f = QFont(self.font())
         f.setPixelSize(13)
-        f.setWeight(QFont.Weight.Medium)
         return f
+
+    def _seg_w(self) -> float:
+        fm = QFontMetrics(self._font())
+        return max(fm.horizontalAdvance(t) for t in self._items) + 28
 
     def sizeHint(self):
         return QSize(int(self._seg_w() * len(self._items)) + 6, self._h)
@@ -203,27 +136,14 @@ class Segmented(QWidget):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         r = QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
-        rad = r.height() / 2
-        track = QPainterPath()
-        track.addRoundedRect(r, rad, rad)
-        p.fillPath(track, _rgba(0, 0, 0, 80))
-        p.setPen(QPen(_rgba(255, 255, 255, 20), 1))
-        p.drawPath(track)
-
+        p.setPen(QPen(QColor(theme.ACCENT if self.hasFocus() else theme.BORDER), 1))
+        p.setBrush(QColor(theme.SURFACE_2))
+        p.drawRoundedRect(r, 8, 8)
         sw = self._seg_w()
         thumb = QRectF(3 + self._pos * sw, 3, sw, r.height() - 5)
-        tp = QPainterPath()
-        tp.addRoundedRect(thumb, thumb.height() / 2, thumb.height() / 2)
-        g = QLinearGradient(0, thumb.top(), 0, thumb.bottom())
-        g.setColorAt(0, _rgba(255, 255, 255, 46))
-        g.setColorAt(1, _rgba(255, 255, 255, 22))
-        p.fillPath(tp, g)
-        edge = QLinearGradient(0, thumb.top(), 0, thumb.bottom())
-        edge.setColorAt(0, _rgba(255, 255, 255, 80))
-        edge.setColorAt(1, _rgba(255, 255, 255, 12))
-        p.setPen(QPen(QBrush(edge), 1))
-        p.drawPath(tp)
-
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(QColor(theme.SURFACE_3))
+        p.drawRoundedRect(thumb, 6, 6)
         p.setFont(self._font())
         for i, t in enumerate(self._items):
             cell = QRectF(3 + i * sw, 0, sw, r.height())
@@ -234,10 +154,6 @@ class Segmented(QWidget):
             else:
                 p.setPen(QColor(theme.TEXT_2))
             p.drawText(cell, Qt.AlignmentFlag.AlignCenter, t)
-        if self.hasFocus():
-            p.setPen(QPen(_rgba(204, 40, 90, 150), 1.2))
-            p.setBrush(Qt.BrushStyle.NoBrush)
-            p.drawPath(track)
 
 
 class Toggle(QAbstractButton):
@@ -250,7 +166,7 @@ class Toggle(QAbstractButton):
         self.setText(text)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self._t = 1.0 if checked else 0.0
-        self._anim = QVariantAnimation(self, duration=180, easingCurve=QEasingCurve.Type.OutCubic)
+        self._anim = QVariantAnimation(self, duration=150, easingCurve=QEasingCurve.Type.OutCubic)
         self._anim.valueChanged.connect(self._on_anim)
         self.toggled.connect(self._animate)
 
@@ -265,46 +181,40 @@ class Toggle(QAbstractButton):
         self._anim.start()
 
     def sizeHint(self):
-        w = 38
+        w = 34
         if self.text():
             w += 10 + QFontMetrics(self.font()).horizontalAdvance(self.text())
-        return QSize(w, 24)
+        return QSize(w, 22)
 
     def paintEvent(self, _):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
-        y = (self.height() - 22) / 2
-        track = QRectF(0, y, 38, 22)
-        off = _rgba(255, 255, 255, 34)
-        on = QColor(_ACCENT)
+        y = (self.height() - 18) / 2
+        off, on = QColor(theme.SURFACE_3), QColor(theme.ACCENT)
         c = QColor(
             int(off.red() + (on.red() - off.red()) * self._t),
             int(off.green() + (on.green() - off.green()) * self._t),
             int(off.blue() + (on.blue() - off.blue()) * self._t),
-            int(off.alpha() + (255 - off.alpha()) * self._t),
         )
         if not self.isEnabled():
-            c.setAlpha(60)
+            c = QColor(theme.SURFACE_2)
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(c)
-        p.drawRoundedRect(track, 11, 11)
-        knob_x = 2 + self._t * 16
-        p.setBrush(_rgba(0, 0, 0, 50))
-        p.drawEllipse(QRectF(knob_x, y + 2.6, 18, 18))
-        p.setBrush(QColor("#F7F2F4") if self.isEnabled() else QColor(theme.TEXT_3))
-        p.drawEllipse(QRectF(knob_x, y + 2, 18, 18))
+        p.drawRoundedRect(QRectF(0, y, 34, 18), 9, 9)
+        p.setBrush(QColor("#F4F1F2") if self.isEnabled() else QColor(theme.TEXT_3))
+        p.drawEllipse(QRectF(2 + self._t * 16, y + 2, 14, 14))
         if self.text():
             p.setPen(QColor(theme.TEXT if self.isEnabled() else theme.TEXT_3))
-            p.drawText(QRectF(48, 0, self.width() - 48, self.height()),
+            p.drawText(QRectF(44, 0, self.width() - 44, self.height()),
                        Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft, self.text())
 
 
 class ProgressLine(QWidget):
-    """Hairline progress. value=None shows a travelling highlight (unknown size)."""
+    """Thin progress bar. value=None shows a moving segment (unknown size)."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(4)
+        self.setFixedHeight(3)
         self._value: float | None = 0.0
         self._phase = 0.0
         self._error = False
@@ -326,24 +236,15 @@ class ProgressLine(QWidget):
 
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         r = QRectF(self.rect())
-        p.setPen(Qt.PenStyle.NoPen)
-        p.setBrush(_rgba(255, 255, 255, 20))
-        p.drawRoundedRect(r, 2, 2)
+        p.fillRect(r, QColor(theme.SURFACE_3))
         if self._error:
-            p.setBrush(QColor(theme.ERROR))
-            p.drawRoundedRect(r, 2, 2)
-            return
-        g = QLinearGradient(0, 0, r.width(), 0)
-        g.setColorAt(0, QColor("#7C0029"))
-        g.setColorAt(1, QColor("#D11A55"))
-        p.setBrush(g)
-        if self._value is None:
+            p.fillRect(r, QColor(theme.ERROR))
+        elif self._value is None:
             x = (self._phase - 0.3) * r.width()
-            p.drawRoundedRect(QRectF(x, 0, r.width() * 0.3, r.height()).intersected(r), 2, 2)
+            p.fillRect(QRectF(x, 0, r.width() * 0.3, r.height()).intersected(r), QColor(theme.ACCENT))
         elif self._value > 0:
-            p.drawRoundedRect(QRectF(0, 0, r.width() * min(1.0, self._value), r.height()), 2, 2)
+            p.fillRect(QRectF(0, 0, r.width() * min(1.0, self._value), r.height()), QColor(theme.ACCENT))
 
 
 class ElidedLabel(QLabel):
@@ -356,14 +257,14 @@ class ElidedLabel(QLabel):
         p = QPainter(self)
         p.setPen(self.palette().color(self.foregroundRole()))
         p.setFont(self.font())
-        text = self.fontMetrics().elidedText(self.text(), Qt.TextElideMode.ElideMiddle, self.width())
+        text = self.fontMetrics().elidedText(self.text(), Qt.TextElideMode.ElideRight, self.width())
         p.drawText(self.rect(), int(self.alignment()) | Qt.AlignmentFlag.AlignVCenter, text)
 
 
 class Badge(QWidget):
     """Monogram tile for a platform; no third-party logos are used."""
 
-    def __init__(self, text: str, parent=None, size: int = 38):
+    def __init__(self, text: str, parent=None, size: int = 34):
         super().__init__(parent)
         self.text = text
         self.setFixedSize(size, size)
@@ -372,20 +273,52 @@ class Badge(QWidget):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         r = QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
-        g = QLinearGradient(0, 0, 0, r.height())
-        g.setColorAt(0, QColor(170, 16, 66, 210))
-        g.setColorAt(1, QColor(110, 0, 36, 210))
-        path = QPainterPath()
-        path.addRoundedRect(r, 10, 10)
-        p.fillPath(path, g)
-        p.setPen(QPen(_rgba(255, 255, 255, 50), 1))
-        p.drawPath(path)
+        p.setPen(QPen(QColor(theme.BORDER), 1))
+        p.setBrush(QColor(theme.SURFACE_2))
+        p.drawRoundedRect(r, 8, 8)
         f = QFont(self.font())
-        f.setPixelSize(12)
+        f.setPixelSize(11)
         f.setWeight(QFont.Weight.DemiBold)
         p.setFont(f)
-        p.setPen(QColor("white"))
+        p.setPen(QColor(theme.TEXT_2))
         p.drawText(r, Qt.AlignmentFlag.AlignCenter, self.text)
+
+
+class Thumb(QWidget):
+    """Rounded image box; draws the image cropped to fill."""
+
+    def __init__(self, w: int, h: int, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(w, h)
+        self.pixmap = None
+        self.message = ""
+
+    def set_pixmap(self, px, message: str = ""):
+        self.pixmap = px
+        self.message = message
+        self.update()
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        r = QRectF(self.rect())
+        path = QPainterPath()
+        path.addRoundedRect(r, 8, 8)
+        p.fillPath(path, QColor(theme.SURFACE_2))
+        if self.pixmap and not self.pixmap.isNull():
+            p.setClipPath(path)
+            pw, ph = self.pixmap.width(), self.pixmap.height()
+            scale = max(r.width() / pw, r.height() / ph)
+            w, h = pw * scale, ph * scale
+            p.drawPixmap(QRectF((r.width() - w) / 2, (r.height() - h) / 2, w, h), self.pixmap,
+                         QRectF(self.pixmap.rect()))
+        elif self.message:
+            p.setPen(QColor(theme.TEXT_3))
+            f = QFont(self.font())
+            f.setPixelSize(12)
+            p.setFont(f)
+            p.drawText(r, Qt.AlignmentFlag.AlignCenter, self.message)
 
 
 def label(text: str, name: str | None = None, wrap: bool = False) -> QLabel:
@@ -400,7 +333,7 @@ def icon_button(name: str, tip: str, color: str = theme.TEXT_2) -> QPushButton:
     b = QPushButton()
     b.setObjectName("Icon")
     b.setIcon(icons.icon(name, color))
-    b.setIconSize(QSize(18, 18))
+    b.setIconSize(QSize(17, 17))
     b.setToolTip(tip)
     b.setCursor(Qt.CursorShape.PointingHandCursor)
     return b

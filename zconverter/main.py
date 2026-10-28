@@ -45,8 +45,37 @@ def build_app(argv) -> QApplication:
     return app
 
 
+def _selftest(app) -> int:
+    """`zConverter.exe --selftest`: checks the bundled pieces work, writes selftest.txt in the app folder."""
+    from PySide6.QtCore import QTimer
+
+    from .core import probe
+    from .ui.login_dialog import LoginDialog
+
+    lines = []
+    try:
+        info = probe.probe("https://www.youtube.com/watch?v=jNQXAC9IVRw")
+        lines.append(f"probe ok: {info.title} {info.duration}s")
+        lines.append(f"frame ok: {len(probe.frame(info.video, 5))} bytes")
+    except Exception as e:  # report, don't crash
+        lines.append(f"probe/frame FAILED: {e}")
+    dlg = LoginDialog("reddit")
+    dlg.show()
+
+    def finish():
+        lines.append(f"login browser cookies: {len(dlg._cookies)}")
+        (app_dir() / "selftest.txt").write_text("\n".join(lines), encoding="utf-8")
+        dlg.reject()
+        app.quit()
+
+    QTimer.singleShot(15000, finish)
+    return app.exec()
+
+
 def main() -> int:
     app = build_app(sys.argv)
+    if "--selftest" in sys.argv:
+        return _selftest(app)
     from .ui.legal_page import ConsentDialog
     from .ui.window import MainWindow
 

@@ -27,18 +27,34 @@ a = Analysis(
     pathex=[str(ROOT)],
     binaries=collect_dynamic_libs("imageio_ffmpeg"),
     datas=datas,
-    hiddenimports=["yt_dlp_ejs"],
-    excludes=["tkinter", "unittest", "pydoc", "setuptools", "PySide6.QtWebEngineCore",
-              "PySide6.QtWebEngineWidgets", "PySide6.QtQml", "PySide6.QtQuick", "PySide6.QtPdf",
-              "PySide6.Qt3DCore", "PySide6.QtMultimedia"],
+    hiddenimports=["yt_dlp_ejs", "PySide6.QtWebEngineWidgets", "PySide6.QtWebEngineCore"],
+    excludes=["tkinter", "unittest", "pydoc", "setuptools", "PySide6.QtPdf", "PySide6.Qt3DCore",
+              "PySide6.QtMultimedia"],
     noarchive=False,
 )
 
-# Qt pulls in libraries a widgets-only app never loads; leave them out of the release.
-_UNUSED = ("opengl32sw", "qt6pdf", "qt6qml", "qt6quick", "qt6virtualkeyboard", "qpdf", "qtvirtualkeyboard",
-           "qt6opengl.dll", "qt6network")
-a.binaries = [b for b in a.binaries if not any(u in b[0].lower().replace("\\", "/").split("/")[-1] for u in _UNUSED)]
-a.datas = [d for d in a.datas if "/translations/" not in d[0].replace("\\", "/").lower()]
+# Qt pulls in a lot this app never loads; leave it out of the release.
+# The login browser needs QtWebEngine + its Quick/Qml/Network dependencies, but not QML modules,
+# 3D, devtools or every UI translation.
+_UNUSED = ("qt6pdf", "qpdf", "virtualkeyboard", "quick3d", "quickcontrols2", "shadertools", "physics",
+           "qt6quicktimeline", "qt6quickparticles", "qt6charts", "qt6datavis", "qt6graphs", "qt6sensors",
+           "qt6texttospeech", "qt6spatialaudio", "qt6bluetooth", "qt6nfc", "qt6serial", "qt6scxml",
+           "qt6location", "qt6multimedia", "qt6labs", "qtwebengine_devtools_resources")
+_KEEP_LOCALES = ("en-us.pak", "tr.pak")
+
+
+def _wanted(dest: str) -> bool:
+    d = dest.lower().replace("\\", "/")
+    name = d.split("/")[-1]
+    if "/qml/" in d or any(u in name for u in _UNUSED):
+        return False
+    if "/translations/" in d:
+        return "qtwebengine_locales" in d and name in _KEEP_LOCALES
+    return True
+
+
+a.binaries = [b for b in a.binaries if _wanted(b[0])]
+a.datas = [d for d in a.datas if _wanted(d[0])]
 pyz = PYZ(a.pure)
 
 version_info = VSVersionInfo(
