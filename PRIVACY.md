@@ -33,7 +33,7 @@ Uygulama yalnızca senin başlattığın işlemler için ağ bağlantısı kurar
 - Spotify parçaları için YouTube araması,
 - X profil görselleri için açık kaynaklı [FxTwitter](https://github.com/FxEmbed/FxEmbed) API'si (`api.fxtwitter.com`). Yalnızca girdiğin kullanıcı adı gönderilir.
 
-Bu hizmetler IP adresin gibi verileri kendi gizlilik politikalarına göre işler; geliştiricinin bu işleme üzerinde kontrolü yoktur. Uygulama kendini `zConverter/<sürüm>` kullanıcı aracısıyla tanıtır.
+Bu hizmetler IP adresin gibi verileri kendi gizlilik politikalarına göre işler; geliştiricinin bu işleme üzerinde kontrolü yoktur. Uygulama kendini `zConverter/<sürüm>` kullanıcı aracısıyla tanıtır; yalnızca TikTok bağlantılarında yt-dlp'nin tarayıcı uyumluluk modu kullanılır.
 
 ## 4. Hesap oturumları
 

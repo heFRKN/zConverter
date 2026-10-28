@@ -1,6 +1,6 @@
 # Kullanım Koşulları ve Yasal Uyarı
 
-Son güncelleme: 28 Ekim 2026 · Koşul sürümü 2
+Son güncelleme: 28 Ekim 2026 · Koşul sürümü 3
 
 zConverter ("Uygulama"), heFRKN tarafından geliştirilen, MIT Lisansı ile dağıtılan ücretsiz ve açık kaynaklı bir masaüstü yazılımıdır. Uygulamayı kurarak veya kullanarak bu koşulları kabul etmiş olursun. Kabul etmiyorsan Uygulamayı kullanma.
 
@@ -8,8 +8,8 @@ zConverter ("Uygulama"), heFRKN tarafından geliştirilen, MIT Lisansı ile dağ
 
 - Herkese açık çevrimiçi içerikleri **kişisel ve ticari olmayan** amaçlarla (çevrimdışı izleme, yedekleme, kendi içeriğini arşivleme gibi) cihazına kaydetmeni sağlayan bir araçtır.
 - Hiçbir içeriği **barındırmaz, dağıtmaz, paylaşmaz** ve bir sunucusu yoktur. Tüm bağlantılar doğrudan senin cihazından ilgili platforma yapılır.
-- DRM'yi veya başka hiçbir teknik koruma önlemini **aşmaz**, aşmaya çalışmaz.
-- Platformlara kendini dürüstçe "zConverter" olarak tanıtır; tarayıcı veya arama motoru botu taklidi yapmaz, bot korumalarını atlatmaz.
+- DRM'yi ve eserleri koruyan kopya koruma önlemlerini **aşmaz**, aşmaya çalışmaz.
+- Platformlara kendini "zConverter" olarak tanıtır. **İstisna: TikTok** tarayıcı dışından gelen bağlantıları kabul etmediği için TikTok bağlantılarında yt-dlp'nin tarayıcı uyumluluk modu kullanılır. Bu, TikTok'un hizmet koşullarına aykırı olabilir; TikTok özelliğini kullanmanın sorumluluğu ve riski (ör. erişim kısıtlaması) tamamen kullanıcıya aittir.
 
 ## 2. Senin sorumlulukların
 
@@ -59,7 +59,7 @@ Bu koşullar güncellenebilir; önemli değişikliklerde Uygulama yeniden onay i
 
 zConverter is free, open-source software by heFRKN, released under the MIT License. By installing or using it you accept these terms.
 
-1. **What it is.** A tool for saving publicly available online content to your own device for **personal, non-commercial** use. It hosts, distributes and shares nothing and has no server. It does **not** circumvent DRM or any technical protection measure, identifies itself honestly to websites and does not bypass bot protection.
+1. **What it is.** A tool for saving publicly available online content to your own device for **personal, non-commercial** use. It hosts, distributes and shares nothing and has no server. It does **not** circumvent DRM or copy protection. It identifies itself as zConverter, except for TikTok, which rejects non-browser connections: there yt-dlp's browser compatibility mode is used. This may conflict with TikTok's terms of service; using the TikTok feature is entirely at your own risk.
 2. **Your responsibility.** You are solely responsible for making sure you have the right to download and use any content: copyright law where you live (e.g. Turkish Law No. 5846, the US DMCA, EU Directives 2001/29/EC and 2019/790) and each platform's terms of service apply. Some platforms' terms prohibit downloading.
 3. **Personal data.** Profile pictures and banners can be personal data. Using them to impersonate, harass, dox or republish people without consent may be unlawful (e.g. Turkish KVKK No. 6698, GDPR, criminal law).
 4. **Prohibited uses.** Saving paid or restricted content without permission; bulk scraping, spam, harassment, impersonation or fraud; using other people's accounts or cookies; any unlawful activity.

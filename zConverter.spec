@@ -21,13 +21,14 @@ datas = [
 ]
 datas += collect_data_files("imageio_ffmpeg", includes=["binaries/*"])
 datas += collect_data_files("yt_dlp_ejs")
+datas += collect_data_files("curl_cffi")
 
 a = Analysis(
     ["run.py"],
     pathex=[str(ROOT)],
-    binaries=collect_dynamic_libs("imageio_ffmpeg"),
+    binaries=collect_dynamic_libs("imageio_ffmpeg") + collect_dynamic_libs("curl_cffi"),
     datas=datas,
-    hiddenimports=["yt_dlp_ejs", "PySide6.QtWebEngineWidgets", "PySide6.QtWebEngineCore"],
+    hiddenimports=["yt_dlp_ejs", "curl_cffi", "yt_dlp.networking._curlcffi", "PySide6.QtWebEngineWidgets", "PySide6.QtWebEngineCore"],
     excludes=["tkinter", "unittest", "pydoc", "setuptools", "PySide6.QtPdf", "PySide6.Qt3DCore",
               "PySide6.QtMultimedia"],
     noarchive=False,

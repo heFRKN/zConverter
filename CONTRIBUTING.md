@@ -5,7 +5,7 @@ Katkıların için teşekkürler. / Thanks for contributing.
 ## Kurallar
 
 - Gönderdiğin her katkı, projenin [MIT Lisansı](LICENSE) altında yayınlanmayı kabul ettiğin anlamına gelir. Katkının sana ait olduğundan ve bu lisansla paylaşma hakkın olduğundan emin ol.
-- **Kabul edilmeyecek değişiklikler:** DRM veya başka bir teknik koruma önlemini aşan, platformların bot korumasını atlatan, tarayıcı ya da arama motoru botu taklidi yapan, ücretli içeriğe izinsiz erişim sağlayan, kullanıcıdan veri toplayan veya telemetri ekleyen kodlar.
+- **Kabul edilmeyecek değişiklikler:** DRM veya kopya korumasını aşan, ücretli içeriğe izinsiz erişim sağlayan, kullanıcıdan veri toplayan veya telemetri ekleyen kodlar.
 - GPL lisanslı Python kütüphaneleri (ör. `mutagen`) uygulama koduna eklenmez; dağıtılan exe MIT kalmalıdır. Yeni bir bağımlılık eklerken lisansını [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) dosyasına yaz.
 - `core/` arayüzden bağımsız kalmalı; Qt yalnızca `ui/` içinde kullanılır.
 
@@ -22,5 +22,5 @@ Hata bildirirken: Windows sürümü, zConverter sürümü, bağlantının platfo
 ## Rules (English)
 
 - Contributions are accepted under the project's MIT License.
-- Not accepted: code that circumvents DRM or bot protection, impersonates browsers or crawlers, accesses paid content without permission, or collects user data / adds telemetry.
+- Not accepted: code that circumvents DRM or copy protection, accesses paid content without permission, or collects user data / adds telemetry.
 - No GPL-licensed Python libraries in the app; document every new dependency's license in THIRD_PARTY_NOTICES.md.

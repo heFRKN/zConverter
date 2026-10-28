@@ -40,7 +40,7 @@
 | Spotify | – | ✓ ¹ | – | – |
 | SoundCloud | – | ✓ | – | – |
 | Instagram | ✓ | ✓ | ✓ ² | platformda yok |
-| TikTok | ✗ ⁵ | ✗ ⁵ | – | – |
+| TikTok | ✓ ⁵ | ✓ ⁵ | – | – |
 | X (Twitter) | ✓ | ✓ | ✓ | ✓ |
 | Reddit | ✓ | ✓ | ✓ ³ | ✓ ³ |
 | Threads | ✓ ⁴ | ✓ ⁴ | ✓ | platformda yok |
@@ -50,7 +50,7 @@
 2. Giriş yapmadan küçük boyut gelir. Tam çözünürlük için Instagram'a giriş yap.
 3. Platform girişsiz erişime izin vermiyor; bir kez giriş yapman gerekir.
 4. Sınırlı destek: herkese açık gönderilerde çalışır.
-5. TikTok tarayıcı dışından gelen istekleri engelliyor; zConverter bot korumalarını atlatmadığı için şu an çalışmıyor.
+5. Filigransız iner. TikTok tarayıcı dışı bağlantıları kabul etmediği için yt-dlp'nin tarayıcı uyumluluk modu kullanılır; bu TikTok'un hizmet koşullarına aykırı olabilir, risk kullanıcıya aittir.
 
 Giriş isteyen içeriklerde **Giriş yap** düğmesi çıkar: platformun kendi giriş sayfası uygulamanın içinde açılır, bir kez giriş yaparsın, oturum bilgisayarında Windows şifrelemesiyle saklanır. Şifren uygulamaya geçmez. Hesapları **Ayarlar → Hesaplar**'dan yönetebilirsin. Ayrıntılar: [PRIVACY.md](PRIVACY.md).
 
@@ -99,7 +99,7 @@ tools/         ikon üretici, ekran görüntüsü aracı
 
 ## Yasal
 
-zConverter yalnızca **hakkın olan ya da kişisel kullanımına izin verilen** içerikler içindir. İndirdiğin içerikten ve onu nasıl kullandığından sen sorumlusun; telif hakkı mevzuatı (FSEK, DMCA vb.), KVKK ve platformların hizmet koşulları geçerlidir. Uygulama DRM'yi aşmaz, hiçbir içerik barındırmaz, platformlara kendini dürüstçe tanıtır ve hiçbir veri toplamaz.
+zConverter yalnızca **hakkın olan ya da kişisel kullanımına izin verilen** içerikler içindir. İndirdiğin içerikten ve onu nasıl kullandığından sen sorumlusun; telif hakkı mevzuatı (FSEK, DMCA vb.), KVKK ve platformların hizmet koşulları geçerlidir. Uygulama DRM'yi aşmaz, hiçbir içerik barındırmaz ve hiçbir veri toplamaz.
 
 - [Kullanım koşulları ve yasal uyarı](TERMS.md)
 - [Gizlilik politikası ve KVKK aydınlatma metni](PRIVACY.md)
@@ -123,7 +123,8 @@ YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook 
 - Visual trimming: frames at both cut points, filmstrip / waveform timeline, listen to the cuts
 - Profile images at full resolution with resize, square/circle/16:9 crop and PNG/JPG/WEBP export
 - Spotify: no audio is ever downloaded from Spotify (DRM); public track metadata is read and the song is matched on YouTube
-- No accounts, no telemetry, no servers. The app identifies itself honestly and never circumvents DRM or bot protection
+- No accounts, no telemetry, no servers. Never circumvents DRM
+- TikTok downloads without watermark (uses yt-dlp's browser compatibility mode; may conflict with TikTok's terms, at your own risk)
 
 **Install:** download the zip from [Releases](https://github.com/heFRKN/zConverter/releases), extract, run `zConverter.exe`. **Build:** `powershell -ExecutionPolicy Bypass -File build.ps1`.
 

@@ -70,6 +70,8 @@ def _pick(formats: list[dict], video: bool) -> Stream | None:
     def ok(f):
         if not f.get("url") or f.get("protocol") not in ("https", "http", "m3u8", "m3u8_native"):
             return False
+        if f.get("format_note") == "watermarked":
+            return False
         # a missing codec means "unknown" (e.g. Facebook), not "absent"
         if video:
             return f.get("vcodec") != "none"
@@ -90,10 +92,14 @@ def _pick(formats: list[dict], video: bool) -> Stream | None:
     return Stream(f["url"], dict(f.get("http_headers") or {}))
 
 
-def _fill_streams(info: MediaInfo, raw: dict):
+def _fill_streams(info: MediaInfo, raw: dict, jar=None):
     formats = raw.get("formats") or ([raw] if raw.get("url") else [])
     info.video = _pick(formats, video=True)
     info.audio = _pick(formats, video=False)
+    # some CDNs (e.g. TikTok) only serve the stream together with the cookies set while extracting
+    for stream in (info.video, info.audio):
+        if stream and jar is not None and (cookie := jar.get_cookie_header(stream.url)):
+            stream.headers["Cookie"] = cookie
     if not info.duration and (info.video or info.audio):
         info.duration = _stream_duration(info.video or info.audio)
 
@@ -133,7 +139,7 @@ def probe(url: str, cookies: str = "", playlist: bool = False) -> MediaInfo:
     info.uploader = raw.get("uploader") or raw.get("channel") or raw.get("creator") or ""
     info.duration = raw.get("duration")
     info.thumbnail = _thumb(raw)
-    _fill_streams(info, raw)
+    _fill_streams(info, raw, ydl.cookiejar)
     return info
 
 
@@ -162,7 +168,7 @@ def _probe_spotify(url: str, cookies: str) -> MediaInfo:
     info.thumbnail = track.cover or _thumb(entry)
     info.duration = entry.get("duration")
     info.note = f"YouTube eşleşmesi: {entry.get('title', '')}"
-    _fill_streams(info, entry)
+    _fill_streams(info, entry, ydl.cookiejar)
     return info
 
 

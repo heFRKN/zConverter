@@ -59,6 +59,11 @@ def _selftest(app) -> int:
         lines.append(f"frame ok: {len(probe.frame(info.video, 5))} bytes")
     except Exception as e:  # report, don't crash
         lines.append(f"probe/frame FAILED: {e}")
+    try:
+        info = probe.probe("https://www.tiktok.com/@nasa/video/7679483952507276558")
+        lines.append(f"tiktok ok: {info.duration}s, frame {len(probe.frame(info.video, 3))} bytes")
+    except Exception as e:
+        lines.append(f"tiktok FAILED: {e}")
     dlg = LoginDialog("reddit")
     dlg.show()
 

@@ -72,8 +72,8 @@ def humanize(err: BaseException | str) -> str:
     raw = str(err)
     msg = _clean(err)
     low = msg.lower()
-    if "[tiktok]" in raw.lower() or "tiktok" in low and "unexpected response" in low:
-        return "TikTok, tarayıcı dışından gelen istekleri engelliyor; bu sürümde TikTok indirmesi çalışmıyor."
+    if "[tiktok]" in raw.lower() and "unexpected response" in low:
+        return "TikTok isteği geri çevirdi. Biraz bekleyip tekrar dene."
     if "unsupported url" in low:
         return "Bu bağlantı desteklenmiyor."
     if "drm" in low:
@@ -237,7 +237,10 @@ class Downloader:
             sort = ["res"] if r.quality == "best" else [f"res:{r.quality}"]
             if r.fmt == "mp4":
                 sort += ["vcodec:h264", "acodec:aac"]
-            o.update(format="bv*+ba/b", format_sort=sort, merge_output_format=r.fmt)
+            fmt = "bv*+ba/b"
+            if (p := detect(r.url)) and p.key == "tiktok":
+                fmt = "b[format_note!=watermarked]/b"  # TikTok also offers a watermarked copy; skip it
+            o.update(format=fmt, format_sort=sort, merge_output_format=r.fmt)
             pps.append({"key": "FFmpegVideoRemuxer", "preferedformat": r.fmt})
         else:
             o["format"] = "ba/b"
