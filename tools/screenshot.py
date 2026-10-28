@@ -8,12 +8,12 @@ from PySide6.QtCore import QTimer
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from zconventer.core import profiles  # noqa: E402
-from zconventer.core.downloader import Request  # noqa: E402
-from zconventer.core.settings import Settings  # noqa: E402
-from zconventer.main import build_app  # noqa: E402
-from zconventer.ui.jobs import Job  # noqa: E402
-from zconventer.ui.window import MainWindow  # noqa: E402
+from zconverter.core import profiles  # noqa: E402
+from zconverter.core.downloader import Request  # noqa: E402
+from zconverter.core.settings import Settings  # noqa: E402
+from zconverter.main import build_app  # noqa: E402
+from zconverter.ui.jobs import Job  # noqa: E402
+from zconverter.ui.window import MainWindow  # noqa: E402
 
 
 def main():

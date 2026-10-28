@@ -10,7 +10,7 @@ import requests
 
 from .. import REPO_URL, __version__
 
-USER_AGENT = f"zConventer/{__version__} (+{REPO_URL})"
+USER_AGENT = f"zConverter/{__version__} (+{REPO_URL})"
 
 
 class NetError(Exception):

@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/icon.png" width="88" alt="zConventer">
+  <img src="assets/icon.png" width="88" alt="zConverter">
 </p>
 
-<h1 align="center">zConventer</h1>
+<h1 align="center">zConverter</h1>
 
 <p align="center">
   Video, müzik ve profil görsellerini tek yerden indir. İndirirken kırp, boyutlandır, dönüştür.<br>
@@ -55,8 +55,8 @@ Gizli, yaş sınırlı ya da giriş isteyen içerikler için **Ayarlar → Taray
 
 ## Kurulum
 
-1. [Releases](https://github.com/heFRKN/zConventer/releases) sayfasından `zConventer-x.y.z-windows-x64.zip` dosyasını indir.
-2. Zip'i bir klasöre çıkar ve `zConventer.exe`'yi çalıştır.
+1. [Releases](https://github.com/heFRKN/zConverter/releases) sayfasından `zConverter-x.y.z-windows-x64.zip` dosyasını indir.
+2. Zip'i bir klasöre çıkar ve `zConverter.exe`'yi çalıştır.
 3. Windows SmartScreen "tanınmayan uygulama" uyarısı verirse: **Ek bilgi → Yine de çalıştır**. (Uygulama imzasız olduğu için bu uyarı normaldir; kaynak kodun tamamı bu depoda.)
 
 **İsteğe bağlı:** YouTube'un tüm kalite seçenekleri için bir JavaScript çalışma ortamı önerilir:
@@ -72,8 +72,8 @@ FFmpeg uygulamanın içinde gelir, ayrıca kurman gerekmez.
 Python 3.12+ gerekir.
 
 ```powershell
-git clone https://github.com/heFRKN/zConventer.git
-cd zConventer
+git clone https://github.com/heFRKN/zConverter.git
+cd zConverter
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 .venv\Scripts\python run.py
@@ -85,12 +85,12 @@ Exe ve dağıtım zip'i üretmek için:
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
-Çıktı: `dist\zConventer\zConventer.exe` ve `dist\zConventer-x.y.z-windows-x64.zip`.
+Çıktı: `dist\zConverter\zConverter.exe` ve `dist\zConverter-x.y.z-windows-x64.zip`.
 
 ## Proje yapısı
 
 ```
-zconventer/
+zconverter/
   core/        indirme motoru, Spotify eşleştirme, profil görselleri, medya işleme (arayüzden bağımsız)
   ui/          PySide6 arayüzü: tema, bileşenler, sayfalar
 tools/         ikon üretici, ekran görüntüsü aracı
@@ -98,13 +98,13 @@ tools/         ikon üretici, ekran görüntüsü aracı
 
 ## Yasal
 
-zConventer yalnızca **hakkın olan ya da kişisel kullanımına izin verilen** içerikler içindir. İndirdiğin içerikten ve onu nasıl kullandığından sen sorumlusun; telif hakkı mevzuatı (FSEK, DMCA vb.), KVKK ve platformların hizmet koşulları geçerlidir. Uygulama DRM'yi aşmaz, hiçbir içerik barındırmaz, platformlara kendini dürüstçe tanıtır ve hiçbir veri toplamaz.
+zConverter yalnızca **hakkın olan ya da kişisel kullanımına izin verilen** içerikler içindir. İndirdiğin içerikten ve onu nasıl kullandığından sen sorumlusun; telif hakkı mevzuatı (FSEK, DMCA vb.), KVKK ve platformların hizmet koşulları geçerlidir. Uygulama DRM'yi aşmaz, hiçbir içerik barındırmaz, platformlara kendini dürüstçe tanıtır ve hiçbir veri toplamaz.
 
 - [Kullanım koşulları ve yasal uyarı](TERMS.md)
 - [Gizlilik politikası ve KVKK aydınlatma metni](PRIVACY.md)
 - [Üçüncü taraf lisansları](THIRD_PARTY_NOTICES.md)
 
-YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook sahiplerinin ticari markalarıdır. zConventer bunların hiçbiriyle bağlantılı değildir, onlar tarafından desteklenmez veya onaylanmaz.
+YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook sahiplerinin ticari markalarıdır. zConverter bunların hiçbiriyle bağlantılı değildir, onlar tarafından desteklenmez veya onaylanmaz.
 
 ## Lisans
 
@@ -116,7 +116,7 @@ YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook 
 
 ## English
 
-**zConventer** is a simple Windows app to download video and audio from YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads and Facebook, and to grab profile pictures and banners from YouTube, Instagram, X, Threads, Reddit and Facebook. You can trim audio/video and resize, crop or convert images right before saving.
+**zConverter** is a simple Windows app to download video and audio from YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads and Facebook, and to grab profile pictures and banners from YouTube, Instagram, X, Threads, Reddit and Facebook. You can trim audio/video and resize, crop or convert images right before saving.
 
 - MP4 / MKV video up to 4K, MP3 / M4A / OPUS / FLAC / WAV audio with tags and cover art
 - Frame-accurate trimming while downloading
@@ -124,7 +124,7 @@ YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook 
 - Spotify: no audio is ever downloaded from Spotify (DRM); public track metadata is read and the song is matched on YouTube
 - No accounts, no telemetry, no servers. The app identifies itself honestly and never circumvents DRM or bot protection
 
-**Install:** download the zip from [Releases](https://github.com/heFRKN/zConventer/releases), extract, run `zConventer.exe`. **Build:** `powershell -ExecutionPolicy Bypass -File build.ps1`.
+**Install:** download the zip from [Releases](https://github.com/heFRKN/zConverter/releases), extract, run `zConverter.exe`. **Build:** `powershell -ExecutionPolicy Bypass -File build.ps1`.
 
 **Legal:** for content you own or are allowed to save for personal use only. You are responsible for complying with copyright law and each platform's terms. See [TERMS.md](TERMS.md), [PRIVACY.md](PRIVACY.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Not affiliated with any of the platforms named above.
 

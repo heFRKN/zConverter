@@ -2,14 +2,14 @@
 
 Son güncelleme: 28 Ekim 2026 · Koşul sürümü 1
 
-zConventer ("Uygulama"), heFRKN tarafından geliştirilen, MIT Lisansı ile dağıtılan ücretsiz ve açık kaynaklı bir masaüstü yazılımıdır. Uygulamayı kurarak veya kullanarak bu koşulları kabul etmiş olursun. Kabul etmiyorsan Uygulamayı kullanma.
+zConverter ("Uygulama"), heFRKN tarafından geliştirilen, MIT Lisansı ile dağıtılan ücretsiz ve açık kaynaklı bir masaüstü yazılımıdır. Uygulamayı kurarak veya kullanarak bu koşulları kabul etmiş olursun. Kabul etmiyorsan Uygulamayı kullanma.
 
 ## 1. Uygulama ne yapar, ne yapmaz
 
 - Herkese açık çevrimiçi içerikleri **kişisel ve ticari olmayan** amaçlarla (çevrimdışı izleme, yedekleme, kendi içeriğini arşivleme gibi) cihazına kaydetmeni sağlayan bir araçtır.
 - Hiçbir içeriği **barındırmaz, dağıtmaz, paylaşmaz** ve bir sunucusu yoktur. Tüm bağlantılar doğrudan senin cihazından ilgili platforma yapılır.
 - DRM'yi veya başka hiçbir teknik koruma önlemini **aşmaz**, aşmaya çalışmaz.
-- Platformlara kendini dürüstçe "zConventer" olarak tanıtır; tarayıcı veya arama motoru botu taklidi yapmaz, bot korumalarını atlatmaz.
+- Platformlara kendini dürüstçe "zConverter" olarak tanıtır; tarayıcı veya arama motoru botu taklidi yapmaz, bot korumalarını atlatmaz.
 
 ## 2. Senin sorumlulukların
 
@@ -37,7 +37,7 @@ Spotify içerikleri DRM ile korunur ve Uygulama Spotify'dan **ses indirmez**. Uy
 
 ## 6. Ticari markalar
 
-YouTube, Spotify, SoundCloud, Instagram, TikTok, X (Twitter), Reddit, Threads ve Facebook adları ve logoları ilgili sahiplerinin ticari markalarıdır. zConventer bu şirketlerin hiçbiriyle bağlantılı değildir; onlar tarafından desteklenmez, onaylanmaz veya sponsor edilmez. Platform adları yalnızca uyumluluğu belirtmek için kullanılır. Uygulamada bu markaların logoları yer almaz.
+YouTube, Spotify, SoundCloud, Instagram, TikTok, X (Twitter), Reddit, Threads ve Facebook adları ve logoları ilgili sahiplerinin ticari markalarıdır. zConverter bu şirketlerin hiçbiriyle bağlantılı değildir; onlar tarafından desteklenmez, onaylanmaz veya sponsor edilmez. Platform adları yalnızca uyumluluğu belirtmek için kullanılır. Uygulamada bu markaların logoları yer almaz.
 
 ## 7. Garanti reddi ve sorumluluğun sınırı
 
@@ -45,7 +45,7 @@ Uygulama MIT Lisansı kapsamında **"OLDUĞU GİBİ"** sunulur; açık ya da ör
 
 ## 8. Hak sahipleri
 
-Uygulama hiçbir içerik barındırmadığı için kaldırılabilecek bir içerik de barındırmaz. Uygulamanın kötüye kullanıldığını düşünüyorsan [GitHub Issues](https://github.com/heFRKN/zConventer/issues) üzerinden bildirebilirsin.
+Uygulama hiçbir içerik barındırmadığı için kaldırılabilecek bir içerik de barındırmaz. Uygulamanın kötüye kullanıldığını düşünüyorsan [GitHub Issues](https://github.com/heFRKN/zConverter/issues) üzerinden bildirebilirsin.
 
 ## 9. Değişiklikler ve uygulanacak hukuk
 
@@ -57,7 +57,7 @@ Bu koşullar güncellenebilir; önemli değişikliklerde Uygulama yeniden onay i
 
 # Terms of Use (English)
 
-zConventer is free, open-source software by heFRKN, released under the MIT License. By installing or using it you accept these terms.
+zConverter is free, open-source software by heFRKN, released under the MIT License. By installing or using it you accept these terms.
 
 1. **What it is.** A tool for saving publicly available online content to your own device for **personal, non-commercial** use. It hosts, distributes and shares nothing and has no server. It does **not** circumvent DRM or any technical protection measure, identifies itself honestly to websites and does not bypass bot protection.
 2. **Your responsibility.** You are solely responsible for making sure you have the right to download and use any content: copyright law where you live (e.g. Turkish Law No. 5846, the US DMCA, EU Directives 2001/29/EC and 2019/790) and each platform's terms of service apply. Some platforms' terms prohibit downloading.
@@ -65,7 +65,7 @@ zConventer is free, open-source software by heFRKN, released under the MIT Licen
 4. **Prohibited uses.** Saving paid or restricted content without permission; bulk scraping, spam, harassment, impersonation or fraud; using other people's accounts or cookies; any unlawful activity.
 5. **Spotify.** No audio is downloaded from Spotify. Only public track metadata is read and the song is searched on YouTube.
 6. **Browser session.** The optional cookie feature reads your browser's cookies locally and sends them only to the matching platform. Use only your own account.
-7. **Trademarks.** All platform names and logos belong to their owners. zConventer is not affiliated with, endorsed or sponsored by any of them, and contains none of their logos.
+7. **Trademarks.** All platform names and logos belong to their owners. zConverter is not affiliated with, endorsed or sponsored by any of them, and contains none of their logos.
 8. **No warranty.** Provided "AS IS" without warranty of any kind. To the maximum extent permitted by law, the author is not liable for any damages, claims or sanctions arising from the use of the software or of downloaded content.
 9. **Changes and law.** These terms may change; the app asks for consent again after material changes. Governed by the laws of the Republic of Türkiye, without prejudice to mandatory local law.
 

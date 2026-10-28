@@ -109,7 +109,7 @@ class SettingsPage(QWidget):
         gh.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
         root.addWidget(_card(
             "Hakkında",
-            label(f"zConventer {__version__} · MIT Lisansı · © 2026 {AUTHOR}", "Muted"),
+            label(f"zConverter {__version__} · MIT Lisansı · © 2026 {AUTHOR}", "Muted"),
             label("Bağımsız, açık kaynaklı bir projedir. Adı geçen platformların hiçbiriyle bağlantılı değildir, "
                   "onlar tarafından desteklenmez veya onaylanmaz.", "Caption", wrap=True),
             hbox(gh, None),

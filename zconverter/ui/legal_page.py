@@ -57,7 +57,7 @@ class ConsentDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("zConventer · Kullanım koşulları")
+        self.setWindowTitle("zConverter · Kullanım koşulları")
         self.resize(720, 640)
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
@@ -67,7 +67,7 @@ class ConsentDialog(QDialog):
         root.setContentsMargins(32, 28, 32, 24)
         root.setSpacing(8)
         root.addWidget(label("Başlamadan önce", "H1"))
-        root.addWidget(label("zConventer yalnızca hakkın olan ya da kişisel kullanımına izin verilen içerikler "
+        root.addWidget(label("zConverter yalnızca hakkın olan ya da kişisel kullanımına izin verilen içerikler "
                              "içindir. Lütfen koşulları oku.", "Sub", wrap=True))
         root.addSpacing(10)
         card = GlassCard(padding=18)

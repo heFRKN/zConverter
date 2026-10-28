@@ -11,7 +11,7 @@ from PySide6.QtGui import QGuiApplication, QImage, QPainter
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from zconventer.ui.window import paint_logo  # noqa: E402
+from zconverter.ui.window import paint_logo  # noqa: E402
 
 
 def render(size: int) -> Image.Image:

@@ -1,4 +1,4 @@
-# PyInstaller build: pyinstaller zConventer.spec  (or run build.ps1)
+# PyInstaller build: pyinstaller zConverter.spec  (or run build.ps1)
 # One-folder build on purpose: Qt (LGPL) stays as replaceable DLLs next to the exe.
 import re
 from pathlib import Path
@@ -8,7 +8,7 @@ from PyInstaller.utils.win32.versioninfo import (FixedFileInfo, StringFileInfo, 
                                                  StringTable, VarFileInfo, VarStruct, VSVersionInfo)
 
 ROOT = Path(SPECPATH)
-version = re.search(r'__version__ = "([^"]+)"', (ROOT / "zconventer" / "__init__.py").read_text()).group(1)
+version = re.search(r'__version__ = "([^"]+)"', (ROOT / "zconverter" / "__init__.py").read_text()).group(1)
 vtuple = tuple(int(x) for x in version.split(".")) + (0,)
 
 datas = [
@@ -46,12 +46,12 @@ version_info = VSVersionInfo(
     kids=[
         StringFileInfo([StringTable("041F04B0", [
             StringStruct("CompanyName", "heFRKN"),
-            StringStruct("FileDescription", "zConventer"),
+            StringStruct("FileDescription", "zConverter"),
             StringStruct("FileVersion", version),
-            StringStruct("InternalName", "zConventer"),
+            StringStruct("InternalName", "zConverter"),
             StringStruct("LegalCopyright", "Copyright (c) 2026 heFRKN. MIT License."),
-            StringStruct("OriginalFilename", "zConventer.exe"),
-            StringStruct("ProductName", "zConventer"),
+            StringStruct("OriginalFilename", "zConverter.exe"),
+            StringStruct("ProductName", "zConverter"),
             StringStruct("ProductVersion", version),
         ])]),
         VarFileInfo([VarStruct("Translation", [0x041F, 1200])]),
@@ -63,10 +63,10 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="zConventer",
+    name="zConverter",
     icon="assets/icon.ico",
     console=False,
     version=version_info,
     upx=False,
 )
-coll = COLLECT(exe, a.binaries, a.datas, name="zConventer", upx=False)
+coll = COLLECT(exe, a.binaries, a.datas, name="zConverter", upx=False)

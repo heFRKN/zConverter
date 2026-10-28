@@ -22,6 +22,6 @@ SOFTWARE.
 
 ---
 
-This license covers the source code of zConventer only. Third-party components
+This license covers the source code of zConverter only. Third-party components
 bundled with binary releases (FFmpeg, Qt/PySide6, yt-dlp and others) keep their
 own licenses; see THIRD_PARTY_NOTICES.md and the licenses/ folder.

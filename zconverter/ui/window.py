@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
     def __init__(self, settings: Settings):
         super().__init__()
         self.settings = settings
-        self.setWindowTitle("zConventer")
+        self.setWindowTitle("zConverter")
         self.resize(1200, 820)
         self.setMinimumSize(1040, 720)
         self.setAcceptDrops(True)
@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
         side.setFixedWidth(224)
         s = side.layout()
         s.setSpacing(4)
-        name = label("zConventer", "H2")
+        name = label("zConverter", "H2")
         name.setStyleSheet("font-size: 16px;")
         s.addLayout(hbox(Logo(30), name, None, spacing=10, margins=(6, 6, 0, 0)))
         s.addSpacing(26)

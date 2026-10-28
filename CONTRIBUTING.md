@@ -17,7 +17,7 @@ python -m venv .venv
 .venv\Scripts\python run.py
 ```
 
-Hata bildirirken: Windows sürümü, zConventer sürümü, bağlantının platformu (gizli bilgi içeren bağlantıları paylaşma) ve ekranda görünen hata metni.
+Hata bildirirken: Windows sürümü, zConverter sürümü, bağlantının platformu (gizli bilgi içeren bağlantıları paylaşma) ve ekranda görünen hata metni.
 
 ## Rules (English)
 

@@ -1,8 +1,8 @@
 # Üçüncü Taraf Bileşenler / Third-Party Notices
 
-zConventer'ın kendi kaynak kodu MIT Lisansı ile dağıtılır. Derlenmiş sürümler (exe) aşağıdaki bileşenleri içerir; her biri kendi lisansına tabidir.
+zConverter'ın kendi kaynak kodu MIT Lisansı ile dağıtılır. Derlenmiş sürümler (exe) aşağıdaki bileşenleri içerir; her biri kendi lisansına tabidir.
 
-zConventer's own source code is MIT licensed. Binary releases bundle the components below, each under its own license.
+zConverter's own source code is MIT licensed. Binary releases bundle the components below, each under its own license.
 
 | Bileşen | Lisans | Kaynak |
 |---|---|---|
@@ -22,9 +22,9 @@ zConventer's own source code is MIT licensed. Binary releases bundle the compone
 
 ## FFmpeg (GPL)
 
-FFmpeg, uygulamanın içinde **ayrı bir program** (`ffmpeg-*.exe`) olarak bulunur ve yalnızca komut satırı üzerinden çağrılır; zConventer koduyla birleştirilmez. Kullanılan derleme GPL bileşenleri (ör. libx264) içerdiği için GPL-3.0 kapsamındadır. Lisans metni `licenses/GPL-3.0.txt` dosyasındadır. Kaynak kodu ffmpeg.org'dan, derleme betikleri ve kaynak arşivi gyan.dev'den edinilebilir; istenirse bu sürüme ait kaynak kodu proje sahibince de sağlanır.
+FFmpeg, uygulamanın içinde **ayrı bir program** (`ffmpeg-*.exe`) olarak bulunur ve yalnızca komut satırı üzerinden çağrılır; zConverter koduyla birleştirilmez. Kullanılan derleme GPL bileşenleri (ör. libx264) içerdiği için GPL-3.0 kapsamındadır. Lisans metni `licenses/GPL-3.0.txt` dosyasındadır. Kaynak kodu ffmpeg.org'dan, derleme betikleri ve kaynak arşivi gyan.dev'den edinilebilir; istenirse bu sürüme ait kaynak kodu proje sahibince de sağlanır.
 
-FFmpeg is shipped as a **separate executable** and only invoked from the command line; it is not linked with zConventer. This build includes GPL components and is therefore licensed under GPL-3.0 (see `licenses/GPL-3.0.txt`). Source code is available from ffmpeg.org and gyan.dev, and on request from the project owner.
+FFmpeg is shipped as a **separate executable** and only invoked from the command line; it is not linked with zConverter. This build includes GPL components and is therefore licensed under GPL-3.0 (see `licenses/GPL-3.0.txt`). Source code is available from ffmpeg.org and gyan.dev, and on request from the project owner.
 
 ## Qt / PySide6 (LGPL)
 
@@ -34,6 +34,6 @@ Qt and PySide6 are shipped as separate, replaceable shared libraries in the appl
 
 ## Ticari markalar / Trademarks
 
-Platform adları sahiplerinin ticari markalarıdır. zConventer hiçbir platformun logosunu içermez ve hiçbiriyle bağlantılı değildir.
+Platform adları sahiplerinin ticari markalarıdır. zConverter hiçbir platformun logosunu içermez ve hiçbiriyle bağlantılı değildir.
 
-Platform names are trademarks of their respective owners. zConventer contains none of their logos and is not affiliated with any of them.
+Platform names are trademarks of their respective owners. zConverter contains none of their logos and is not affiliated with any of them.
