@@ -5,71 +5,72 @@
 <h1 align="center">zConverter</h1>
 
 <p align="center">
-  Download video, music and profile images in one place. Trim, resize and convert while you download.<br>
-  A simple Windows app. No accounts, no ads, no telemetry.
+  Video, müzik ve profil görsellerini tek yerden indir. İndirirken kırp, boyutlandır, dönüştür.<br>
+  Sade bir Windows uygulaması. Hesap yok, reklam yok, telemetri yok.
 </p>
 
 <p align="center">
-  <a href="LICENSE">MIT License</a> ·
-  <a href="TERMS.md">Terms of use</a> ·
-  <a href="PRIVACY.md">Privacy</a> ·
-  <a href="#türkçe">Türkçe</a>
+  <a href="LICENSE">MIT Lisansı</a> ·
+  <a href="TERMS.md">Kullanım koşulları</a> ·
+  <a href="PRIVACY.md">Gizlilik ve KVKK</a> ·
+  <a href="#english">English</a>
 </p>
 
-<p align="center"><img src="docs/download.png" width="860" alt="Download screen"></p>
+<p align="center"><img src="docs/download.png" width="860" alt="İndir ekranı"></p>
 
-## Features
+## Özellikler
 
-- **Video and audio downloads** from YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads and Facebook
-- **Formats:** MP4 / MKV video (360p up to 4K), MP3 / M4A / OPUS / FLAC / WAV audio (128 to 320 kbps)
-- **Visual trimming:** paste a link and a preview appears; see the frames at both cut points, drag the handles on a filmstrip (or a waveform for audio) and listen to each cut. Cuts are frame accurate
-- **Cover and tags:** title, artist, album and cover art are added to MP3 / M4A files
-- **Playlists:** download a whole list in one go
-- **Profile images:** profile pictures and banners from YouTube, Instagram, X, Threads, Reddit and Facebook at the highest resolution available
-- **Image editing:** presets (profile, YouTube banner, X header, Facebook cover, Instagram post, story…), exact pixel sizes (cropped to fill, never stretched), square / circle / 16:9 crop, PNG / JPG / WEBP export with quality control, live preview
-- **Sign-in when needed:** sign in on the platform's own page inside the app; the session is stored encrypted with Windows DPAPI and your password never reaches the app
-- **Turkish and English interface**, following your Windows language by default
-- **Queue:** 1 to 4 parallel downloads, cancel and retry; drag a link onto the window or paste with one click
+- **Video ve ses indirme:** YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads, Facebook
+- **Biçimler:** MP4 / MKV video (360p'den 4K'ya), MP3 / M4A / OPUS / FLAC / WAV ses (128 - 320 kbps)
+- **Görsel kırpma:** bağlantıyı yapıştırınca önizleme gelir; başlangıç ve bitiş karelerini görerek, zaman şeridindeki tutamaklarla (seste dalga formuyla) aralığı seç, kesim noktalarını dinle. Kesim kare hassasiyetinde
+- **Kapak ve etiketler:** MP3 / M4A dosyalarına başlık, sanatçı, albüm ve kapak görseli otomatik eklenir
+- **Oynatma listeleri:** tüm listeyi tek seferde indir
+- **Profil görselleri:** YouTube, Instagram, X, Threads, Reddit ve Facebook hesaplarının profil fotoğrafı ve kapak (banner) görseli, en yüksek çözünürlükte
+- **Görsel düzenleme:** piksel cinsinden boyutlandırma (oran kilidiyle), kare / daire / 16:9 kırpma, PNG / JPG / WEBP dönüştürme, kalite ayarı, canlı önizleme
+- **Kuyruk:** aynı anda 1 - 4 indirme, iptal ve tekrar deneme
+- Bağlantıyı pencereye sürükle bırak, ya da tek tıkla panodan yapıştır
 
-<p align="center"><img src="docs/profile.png" width="860" alt="Profile images screen"></p>
+<p align="center"><img src="docs/profile.png" width="860" alt="Profil görselleri ekranı"></p>
 
-## Platform support
+## Platform desteği
 
-| Platform | Video | Audio | Profile picture | Banner |
+| Platform | Video | Ses | Profil fotoğrafı | Kapak / banner |
 |---|:---:|:---:|:---:|:---:|
 | YouTube | ✓ | ✓ | ✓ | ✓ |
 | Spotify | – | ✓ ¹ | – | – |
 | SoundCloud | – | ✓ | – | – |
-| Instagram | ✓ | ✓ | ✓ ² | not on platform |
-| TikTok | ✓ ³ | ✓ ³ | – | – |
+| Instagram | ✓ | ✓ | ✓ ² | platformda yok |
+| TikTok | ✓ ⁵ | ✓ ⁵ | – | – |
 | X (Twitter) | ✓ | ✓ | ✓ | ✓ |
-| Reddit | ✓ ⁴ | ✓ ⁴ | ✓ ⁴ | ✓ ⁴ |
-| Threads | ✓ ⁵ | ✓ ⁵ | ✓ | not on platform |
-| Facebook | ✓ | ✓ | ✓ | ✓ ⁴ |
+| Reddit | ✓ | ✓ | ✓ ³ | ✓ ³ |
+| Threads | ✓ ⁴ | ✓ ⁴ | ✓ | platformda yok |
+| Facebook | ✓ | ✓ | ✓ | ✓ ³ |
 
-1. Spotify is DRM protected; no audio is ever downloaded from Spotify. The public track details are read and the same song is found on YouTube. Tags and album art match Spotify.
-2. Without signing in Instagram only gives a 100 px picture; sign in for full size.
-3. Downloads without watermark. TikTok rejects non-browser connections, so yt-dlp's browser compatibility mode is used. This may conflict with TikTok's terms of service; use it at your own risk.
-4. The platform requires signing in; the app shows a **Sign in** button when needed.
-5. Limited: works for public posts.
+1. Spotify DRM korumalıdır; ses Spotify'dan **indirilmez**. Parça bilgisi okunur ve aynı şarkı YouTube'da bulunur. Etiketler ve albüm kapağı Spotify'dakiyle aynı olur.
+2. Giriş yapmadan küçük boyut gelir. Tam çözünürlük için Instagram'a giriş yap.
+3. Platform girişsiz erişime izin vermiyor; bir kez giriş yapman gerekir.
+4. Sınırlı destek: herkese açık gönderilerde çalışır.
+5. Filigransız iner. TikTok tarayıcı dışı bağlantıları kabul etmediği için yt-dlp'nin tarayıcı uyumluluk modu kullanılır; bu TikTok'un hizmet koşullarına aykırı olabilir, risk kullanıcıya aittir.
 
-## Install
+Giriş isteyen içeriklerde **Giriş yap** düğmesi çıkar: platformun kendi giriş sayfası uygulamanın içinde açılır, bir kez giriş yaparsın, oturum bilgisayarında Windows şifrelemesiyle saklanır. Şifren uygulamaya geçmez. Hesapları **Ayarlar → Hesaplar**'dan yönetebilirsin. Ayrıntılar: [PRIVACY.md](PRIVACY.md).
 
-1. Download `zConverter-x.y.z-windows-x64.zip` from [Releases](https://github.com/heFRKN/zConverter/releases).
-2. Extract it and run `zConverter.exe`.
-3. If Windows SmartScreen warns about an unrecognised app: **More info → Run anyway**. The app is not code-signed; all of its source code is in this repository.
+## Kurulum
 
-**Optional:** a JavaScript runtime gives YouTube its full list of qualities:
+1. [Releases](https://github.com/heFRKN/zConverter/releases) sayfasından `zConverter-x.y.z-windows-x64.zip` dosyasını indir.
+2. Zip'i bir klasöre çıkar ve `zConverter.exe`'yi çalıştır.
+3. Windows SmartScreen "tanınmayan uygulama" uyarısı verirse: **Ek bilgi → Yine de çalıştır**. (Uygulama imzasız olduğu için bu uyarı normaldir; kaynak kodun tamamı bu depoda.)
+
+**İsteğe bağlı:** YouTube'un tüm kalite seçenekleri için bir JavaScript çalışma ortamı önerilir:
 
 ```powershell
 winget install DenoLand.Deno
 ```
 
-FFmpeg is included; nothing else to install.
+FFmpeg uygulamanın içinde gelir, ayrıca kurman gerekmez.
 
-## Run from source / build
+## Kaynaktan çalıştırma ve derleme
 
-Python 3.12+ is required.
+Python 3.12+ gerekir.
 
 ```powershell
 git clone https://github.com/heFRKN/zConverter.git
@@ -79,59 +80,63 @@ python -m venv .venv
 .venv\Scripts\python run.py
 ```
 
-Build the exe and the release zip:
+Exe ve dağıtım zip'i üretmek için:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
-Output: `dist\zConverter\zConverter.exe` and `dist\zConverter-x.y.z-windows-x64.zip`. `zConverter.exe --selftest` checks that the bundled parts work and writes `%APPDATA%\zConverter\selftest.txt`.
+Çıktı: `dist\zConverter\zConverter.exe` ve `dist\zConverter-x.y.z-windows-x64.zip`.
 
-## Project layout
+## Proje yapısı
 
 ```
 zconverter/
-  core/        download engine, previews, Spotify matching, profile images, media processing (no UI)
-  ui/          PySide6 interface: theme, widgets, pages, trim editor, sign-in window
-  i18n.py      interface language (Turkish source strings, English table)
-tools/         icon renderer, screenshots, missing-translation check
+  core/        indirme motoru, Spotify eşleştirme, profil görselleri, medya işleme (arayüzden bağımsız)
+  ui/          PySide6 arayüzü: tema, bileşenler, sayfalar
+tools/         ikon üretici, ekran görüntüsü aracı
 ```
 
-Adding a string to the UI: wrap it in `t("…")` and add the English text to `zconverter/i18n.py`; `python tools/i18n_keys.py` lists anything missing.
+## Yasal
 
-## Legal
+zConverter yalnızca **hakkın olan ya da kişisel kullanımına izin verilen** içerikler içindir. İndirdiğin içerikten ve onu nasıl kullandığından sen sorumlusun; telif hakkı mevzuatı (FSEK, DMCA vb.), KVKK ve platformların hizmet koşulları geçerlidir. Uygulama DRM'yi aşmaz, hiçbir içerik barındırmaz ve hiçbir veri toplamaz.
 
-zConverter is only for content **you own or are allowed to save for personal use**. You are responsible for what you download and how you use it; copyright law (e.g. DMCA, Turkish FSEK), data protection law (GDPR, KVKK) and each platform's terms apply. The app does not circumvent DRM, hosts no content and collects no data.
+- [Kullanım koşulları ve yasal uyarı](TERMS.md)
+- [Gizlilik politikası ve KVKK aydınlatma metni](PRIVACY.md)
+- [Üçüncü taraf lisansları](THIRD_PARTY_NOTICES.md)
 
-- [Terms of use](TERMS.md)
-- [Privacy policy](PRIVACY.md)
-- [Third-party notices](THIRD_PARTY_NOTICES.md)
+YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook sahiplerinin ticari markalarıdır. zConverter bunların hiçbiriyle bağlantılı değildir, onlar tarafından desteklenmez veya onaylanmaz.
 
-YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads and Facebook are trademarks of their respective owners. zConverter is not affiliated with, endorsed or sponsored by any of them.
+## Lisans
 
-## License
-
-[MIT](LICENSE) © 2026 heFRKN. Third-party components in binary releases (FFmpeg: GPL-3.0, Qt: LGPL-3.0 and others) keep their own licenses.
+[MIT](LICENSE) © 2026 heFRKN. Derlenmiş sürümlerdeki üçüncü taraf bileşenler (FFmpeg: GPL-3.0, Qt: LGPL-3.0 vb.) kendi lisanslarına tabidir.
 
 ---
 
-<a id="türkçe"></a>
+<a id="english"></a>
 
-## Türkçe
+## English
 
-**zConverter**; YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads ve Facebook'tan video ve müzik indirmeni, YouTube, Instagram, X, Threads, Reddit ve Facebook hesaplarının profil fotoğrafı ve kapak görsellerini almanı sağlayan sade bir Windows uygulaması. İndirmeden önce ses ve videoyu görerek kırpabilir, görselleri boyutlandırıp dönüştürebilirsin.
+**zConverter** is a simple Windows app to download video and audio from YouTube, Spotify, SoundCloud, Instagram, TikTok, X, Reddit, Threads and Facebook, and to grab profile pictures and banners from YouTube, Instagram, X, Threads, Reddit and Facebook. You can trim audio/video and resize, crop or convert images right before saving.
 
-- MP4 / MKV video (4K'ya kadar), etiket ve kapaklı MP3 / M4A / OPUS / FLAC / WAV ses
-- Görsel kırpma: kesim noktalarının kareleri, zaman şeridi ya da dalga formu, kesimleri dinleme
-- Profil görselleri: hazır boyutlar, tam piksel boyut (esnetmeden kırparak), kare / daire / 16:9, PNG / JPG / WEBP
-- Giriş isteyen içerikler için uygulama içi giriş; oturum Windows şifrelemesiyle saklanır, şifren uygulamaya geçmez
-- Türkçe ve İngilizce arayüz (Ayarlar → Dil)
-- Spotify'dan hiçbir zaman ses indirilmez; parça bilgisi okunur ve şarkı YouTube'da bulunur
-- TikTok filigransız iner; TikTok tarayıcı dışı bağlantıları kabul etmediği için yt-dlp'nin tarayıcı uyumluluk modu kullanılır. Bu TikTok'un koşullarına aykırı olabilir, risk kullanıcıya aittir
-- Hesap yok, telemetri yok, sunucu yok
+- MP4 / MKV video up to 4K, MP3 / M4A / OPUS / FLAC / WAV audio with tags and cover art
+- Visual trimming: frames at both cut points, filmstrip / waveform timeline, listen to the cuts
+- Profile images at full resolution with resize, square/circle/16:9 crop and PNG/JPG/WEBP export
+- Spotify: no audio is ever downloaded from Spotify (DRM); public track metadata is read and the song is matched on YouTube
+- No accounts, no telemetry, no servers. Never circumvents DRM
+- TikTok downloads without watermark (uses yt-dlp's browser compatibility mode; may conflict with TikTok's terms, at your own risk)
 
-**Kurulum:** [Releases](https://github.com/heFRKN/zConverter/releases) sayfasından zip'i indir, çıkar, `zConverter.exe`'yi çalıştır. SmartScreen uyarısında **Ek bilgi → Yine de çalıştır**.
+**Install:** download the zip from [Releases](https://github.com/heFRKN/zConverter/releases), extract, run `zConverter.exe`. **Build:** `powershell -ExecutionPolicy Bypass -File build.ps1`.
 
-**Yasal:** Yalnızca hakkın olan ya da kişisel kullanımına izin verilen içerikler için. İndirdiğin içerikten ve kullanımından sen sorumlusun. Ayrıntılar: [Kullanım koşulları](TERMS.md#kullanım-koşulları-ve-yasal-uyarı) · [Gizlilik ve KVKK](PRIVACY.md#gizlilik-politikası-ve-kvkk-aydınlatma-metni) · [Lisanslar](THIRD_PARTY_NOTICES.md)
+**Legal:** for content you own or are allowed to save for personal use only. You are responsible for complying with copyright law and each platform's terms. See [TERMS.md](TERMS.md), [PRIVACY.md](PRIVACY.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Not affiliated with any of the platforms named above.
 
-**Lisans:** [MIT](LICENSE) © 2026 heFRKN.
+**License:** [MIT](LICENSE) © 2026 heFRKN.
+
+---
+
+## Destek · Support
+
+zConverter ücretsiz ve açık kaynak. İşine yaradıysa destek olabilirsin.<br>
+<sub>zConverter is free and open source. If it helped you, you can support its development.</sub>
+
+[![Kreosus](https://img.shields.io/badge/Kreosus-furkantiril-990033?style=flat-square)](https://kreosus.com/furkantiril)
